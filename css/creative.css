@@ -149,7 +149,6 @@ aside {
 header {
   position: relative;
   width: 100%;
-  min-height: auto;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   background-size: cover;
@@ -165,18 +164,18 @@ header {
 header .header-content {
   position: relative;
   text-align: center;
-  padding: 100px 15px 100px;
+  padding: 1000000px;
   width: 100%;
 }
 header .header-content .header-content-inner h1 {
   font-weight: 700;
   text-transform: uppercase;
-  margin-top: 0;
+  margin-top: 30px;
   margin-bottom: 0;
   font-size: 30px;
 }
 header .header-content .header-content-inner hr {
-  margin: 30px auto;
+  margin: 30px;
 }
 header .header-content .header-content-inner p {
   font-weight: 300;

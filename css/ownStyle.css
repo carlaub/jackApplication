@@ -1,0 +1,11 @@
+.img-logo {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.search-wrapper {
+    float: right;
+    position: absolute;
+    padding: 10px;
+}

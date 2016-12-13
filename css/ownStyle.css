@@ -18,7 +18,7 @@ nav {
 .title-nav {
     padding-top: 50px;
     font-size: 70px;
-    color: #FD9500;
+    color: #F05F40;
 }
 
 .search-nav {
@@ -29,7 +29,7 @@ nav {
 /*fi nav*/
 
 
-/*search*/
+/*barra busqueda*/
 .search-nav input {
     width: 250px;
     height: 40px;
@@ -81,7 +81,7 @@ nav {
     font: bold 15px/40px 'lucida sans', 'trebuchet MS', 'Tahoma';
     color: #fff;
     text-transform: uppercase;
-    background: #FD9500;
+    background: #F05F40;
     -moz-border-radius: 0 3px 3px 0;
     -webkit-border-radius: 0 3px 3px 0;
     border-radius: 0 3px 3px 0;
@@ -89,12 +89,12 @@ nav {
 }
 
 .search-nav button:hover{
-    background: #FD9500;
+    background: #F05F40;
 }
 
 .search-nav button:active,
 .search-nav button:focus{
-    background: #FD9500;
+    background: #F05F40;
 }
 
 .search-nav button:before {
@@ -102,22 +102,24 @@ nav {
     position: absolute;
     border-width: 8px 8px 8px 0;
     border-style: solid solid solid none;
-    border-color: transparent #FD9500 transparent;
+    border-color: transparent #F05F40 transparent;
     top: 12px;
     left: -6px;
 }
 
 .search-nav button:hover:before{
-    border-right-color: #FD9500;
+    border-right-color: #F05F40;
 }
 
 .search-nav button:focus:before{
-    border-right-color: #FD9500;
+    border-right-color: #F05F40;
 }
 
 .search-nav button::-moz-focus-inner {
     border: 0;
     padding: 0;
 }/*fi search*/
+
+
 
 

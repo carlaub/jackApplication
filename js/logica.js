@@ -9,80 +9,65 @@
 
 (function() {
 
-    /**
-     * Prepares the parameters for the http GET.
-     *
-     * @param infoToSearch anything (the killers, queen, jet...)
-     * @param type can be [track,artist,album] or combined with ","
-     * @param limit a number that represents the maximum results
-     */
-    function prepareSearchRequest(infoToSearch, type, limit) {
 
-        return "q=" + infoToSearch.replace(/\s+/g,"+") + "&type=" + type.replace(/\s+/g,"") + "&limit=" + limit;
-    }
-
-
-    function spotifySearch(searchRequest, callback) {
-
-        sendRequest("https://api.spotify.com/v1/search?" + searchRequest, callback);
-    }
-
-    /**
-     * Sends an asynchronous request and, if everything goes well, sends the data to the
-     * callback passed as param.
-     *
-     * @param myRequest The request to be send.
-     * @param callback  The function which will receive the information.
-     */
-    function sendRequest(myRequest, callback) {
-
-        console.log("on sendRequest: " + myRequest);
-
-        var request = new XMLHttpRequest();
-
-        request.onreadystatechange = function() {
-
-            if (request.readyState !== 4) {
-                return;
-            }
-            if (request.status === 200) {
-
-                callback(request.responseText);
-
-            } else {
-                return request.responseText;
-            }
-        };
-        request.open('GET', myRequest);
-        request.send();
-    }
-
-    /**
-     * The method which would parse the json response data before
-     * showing it on the website.
-     *
-     * @param responseData the Json data obtained from the httpRequest
-     */
-    function myCallback(responseData) {
-
-        alert("myCallback: received! " + responseData);
-    }
-
-    /**
-     * This could be another method to parse a specific request response.
-     *
-     * @param responseData the Json data obtained from the httpRequest
-     */
-    function myCallback2(responseData) {
-
-        alert("myCallback2: received! " + responseData);
-        console.log(responseData);
-    }
 
     /******************************************************************************************************
      *
      ******************************************************************************************************/
 
+    var spotify = Spotify();
+
+    var Layout = {
+        setImagesSearch: function(tracks) {
+            var containerToRemove=document.getElementById("container-search");
+
+            if (containerToRemove != null) {
+                containerToRemove.parentNode.removeChild(containerToRemove);
+            }
+            var sectionSearch=document.getElementById("section-search");
+
+            var containerSearch = document.createElement("div");
+            containerSearch.id="container-search";
+            containerSearch.className="row no-gutter popup-gallery";
+            sectionSearch.appendChild(containerSearch);
+
+
+            console.log(tracks);
+            if (tracks.length < 6) {
+                alert("No hay resultados para su búsqueda.");
+            } else {
+                for (var i = 0; i < 6; i ++) {
+                    Layout.renderThumbnail(tracks[i]);
+                }
+            }
+
+
+        },
+        renderThumbnail: function(track) {
+
+
+
+            var containerThumbnail = document.createElement("div");
+            containerThumbnail.id = "containerThumbnail";
+            containerThumbnail.className = "col-lg-4 col-sm-6";
+
+            //IMPORTANT! Click not implemented yet.
+            var clickLink = document.createElement("a");
+            clickLink.className="portfolio-box"
+            var imgSong = document.createElement("img");
+            imgSong.className="img-responsive";
+            imgSong.alt="";
+            imgSong.src=track.album.images[0].url;
+
+
+            clickLink.appendChild(imgSong);
+            containerThumbnail.appendChild(clickLink);
+
+            document.getElementById("container-search").appendChild(containerThumbnail);
+            console.log(document.getElementById("container-search"));
+
+        }
+    }
     var Search = {
         addListener: function() {
             var button = document.getElementById("search-button");
@@ -91,11 +76,18 @@
         },
         searchSong: function(song) {
            // var myRequest = prepareSearchRequest("the killers", "track", "5");
-            var myRequest = prepareSearchRequest(song, "track", "6");
+            var myRequest = spotify.prepareSearchRequest(song, "track", "6");
 
-             spotifySearch(myRequest, myCallback);
-             spotifySearch(myRequest, myCallback2);
+             spotify.spotifySearch(myRequest, Search.getTracks);
+
+        },
+        getTracks: function(responseData) {
+            var json_response_tracks = JSON.parse(responseData);
+
+            //Update Layout
+            Layout.setImagesSearch(json_response_tracks.tracks.items);
         }
+
     }
 
 

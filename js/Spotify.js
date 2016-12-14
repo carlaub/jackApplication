@@ -1,30 +1,23 @@
 /**
  * Created by Albertpv on 13/12/16.
+ *
+ * @author Jorge Melguizo Torres
+ * @author Carla Urrea Blazquez
+ * @author Albert Pernia Vazquez
+ *
+ *
+ * Use example:
+ *
+ * var spotify = Spotify();
+ *
+ * var myRequest = spotify.prepareRequest("the killers", "track", "5");
+ * spotify.searchRequest(myRequest, callbackFunction);
+ *
  */
 
 
+var Spotify = function () {
 
-
-(function () {
-
-
-    /**
-     * Prepares the parameters for the http GET.
-     *
-     * @param infoToSearch anything (the killers, queen, jet...)
-     * @param type can be [track,artist,album] or combined with ","
-     * @param limit a number that represents the maximum results
-     */
-    function prepareSearchRequest(infoToSearch, type, limit) {
-
-        return "q=" + infoToSearch.replace(/\s+/g,"+") + "&type=" + type.replace(/\s+/g,"") + "&limit=" + limit;
-    }
-
-
-    function spotifySearch(searchRequest, callback) {
-
-        sendRequest("https://api.spotify.com/v1/search?" + searchRequest, callback);
-    }
 
     /**
      * Sends an asynchronous request and, if everything goes well, sends the data to the
@@ -78,15 +71,31 @@
 
     }
 
-    // use example
+    return {
 
-    // var myRequest = prepareSearchRequest("the killers", "track", "5");
-    //
-    // spotifySearch(myRequest, myCallback);
-    // spotifySearch(myRequest, myCallback2);
+        /**
+         * Prepares the parameters for the http GET.
+         *
+         * @param infoToSearch anything (the killers, queen, jet...)
+         * @param type can be [track,artist,album] or combined with ","
+         * @param limit a number that represents the maximum results.
+         */
+        prepareSearchRequest: function(infoToSearch, type, limit) {
 
+            return "q=" + infoToSearch.replace(/\s+/g,"+") + "&type=" + type.replace(/\s+/g,"") + "&limit=" + limit;
+        },
+        /**
+         * Searches data in Spotify and returns it to the callback function passes as param.
+         *
+         * @param searchRequest  The data that will be searched.
+         * @param callback       The function which will handle the response.
+         */
+        spotifySearch: function(searchRequest, callback) {
 
-}());
+            sendRequest("https://api.spotify.com/v1/search?" + searchRequest, callback);
+        }
+    }
+}
 
 
 

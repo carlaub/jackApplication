@@ -26,6 +26,7 @@ var Spotify = function () {
      * @param myRequest The request to be send.
      * @param callback  The function which will receive the information.
      */
+
     function sendRequest(myRequest, callback) {
 
         console.log("on sendRequest: " + myRequest);

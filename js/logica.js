@@ -19,20 +19,44 @@
 
     var Layout = {
         setImagesSearch: function(tracks) {
+
+            //la barra del titulo de busqueda
+            var divRowSearch = document.getElementById("div-row-search");
+
+            if(divRowSearch == null){
+
+                var sectionTitleSearch = document.getElementById("about-search");
+                sectionTitleSearch.className="bg-primary";
+
+                var containerTitleSearch = document.getElementById("title-search");
+                divRowSearch = document.createElement("div");
+                divRowSearch.id="div-row-search";
+                divRowSearch.className="col-lg-8 col-lg-offset-2 text-center";
+                var h2Search = document.createElement("h2");
+                h2Search.appendChild(document.createTextNode("Busqueda"));
+                var hrSearch = document.createElement("hr");
+                hrSearch.className = "light";
+                divRowSearch.appendChild(h2Search);
+                divRowSearch.appendChild(hrSearch);
+                containerTitleSearch.appendChild(divRowSearch);
+            }
+
+            //borrar busqueda anterior
             var containerToRemove=document.getElementById("container-search");
 
             if (containerToRemove != null) {
                 containerToRemove.parentNode.removeChild(containerToRemove);
             }
-            var sectionSearch=document.getElementById("section-search");
 
+            //mostrar resultados nueva busqueda
+            var sectionSearch=document.getElementById("section-search");
             var containerSearch = document.createElement("div");
             containerSearch.id="container-search";
             containerSearch.className="row no-gutter popup-gallery";
             sectionSearch.appendChild(containerSearch);
 
+            console.log(tracks);//Debug
 
-            console.log(tracks);
             if (tracks.length < 6) {
                 alert("No hay resultados para su búsqueda.");
             } else {

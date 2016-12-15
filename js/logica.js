@@ -127,7 +127,7 @@
             if (textField.value.length === 0) {
                 alert("No has introducido ninguna busqueda.");
             } else {
-                alert("hola, has introducido: " + textField.value);
+
                 Search.searchSong(textField.value);
             }
 

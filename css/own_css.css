@@ -1,0 +1,17 @@
+
+
+.title-left {
+    margin-left: 2px;
+    float: left;
+    color: green;
+}
+
+.button-search {
+    padding: 2px;
+}
+
+.own-container {
+    margin: 0 auto;
+    max-width: 2000px;
+    width: 90%;
+}

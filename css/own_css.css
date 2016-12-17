@@ -15,3 +15,29 @@
     max-width: 2000px;
     width: 90%;
 }
+
+.teal{
+    background-color: #ee6e73;
+}
+
+.card{
+    margin: 8%;
+}
+
+h2{
+    margin-left: 20px;
+}
+
+body{
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+main{
+    flex: 1 0 auto;
+}
+.p-card {
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow: ellipsis;
+}

@@ -10,89 +10,127 @@
 (function() {
 
 
-
-    /******************************************************************************************************
-     *
-     ******************************************************************************************************/
-
     var spotify = Spotify();
 
     var Layout = {
         setImagesSearch: function(tracks) {
 
-            //la barra del titulo de busqueda
-            var divRowSearch = document.getElementById("div-row-search");
-
-            if(divRowSearch == null){
-
-                var sectionTitleSearch = document.getElementById("about-search");
-                sectionTitleSearch.className="bg-primary";
-
-                var containerTitleSearch = document.getElementById("title-search");
-                divRowSearch = document.createElement("div");
-                divRowSearch.id="div-row-search";
-                divRowSearch.className="col-lg-8 col-lg-offset-2 text-center";
-                var h2Search = document.createElement("h2");
-                h2Search.appendChild(document.createTextNode("Busqueda"));
-                var hrSearch = document.createElement("hr");
-                hrSearch.className = "light";
-                divRowSearch.appendChild(h2Search);
-                divRowSearch.appendChild(hrSearch);
-                containerTitleSearch.appendChild(divRowSearch);
-            }
-
             //borrar busqueda anterior
-            var containerToRemove=document.getElementById("container-search");
+            var generalSection=document.getElementById("general");
+            var section=document.getElementById("section-id");
 
-            if (containerToRemove != null) {
-                containerToRemove.parentNode.removeChild(containerToRemove);
+
+            if (section != null) {
+                section.parentNode.removeChild(section);
             }
 
-            //mostrar resultados nueva busqueda
-            var sectionSearch=document.getElementById("section-search");
-            var containerSearch = document.createElement("div");
-            containerSearch.id="container-search";
-            containerSearch.className="row no-gutter popup-gallery";
-            sectionSearch.appendChild(containerSearch);
+            var sectionTitle = document.createElement("h3");
 
-            console.log(tracks);//Debug
+            section = document.createElement("div");
+            section.id = "section-id";
 
-            if (tracks.length < 6) {
+            sectionTitle.appendChild(document.createTextNode("Busqueda"));
+            section.appendChild(sectionTitle);
+
+            section.className="row";
+
+
+            generalSection.appendChild(section);
+
+
+            console.log(tracks);
+
+            if (tracks.length < 8) {
                 alert("No hay resultados para su búsqueda.");
             } else {
-                for (var i = 0; i < 6; i ++) {
-                    Layout.renderThumbnail(tracks[i]);
+                for (var i = 0; i < 8; i ++) {
+                    Layout.renderThumbnail(tracks[i], i);
                 }
             }
 
-
         },
-        renderThumbnail: function(track) {
+        renderThumbnail: function(track, numTrack) {
+
+            var section = document.getElementById("section-id");
+
+            var cardImg= document.createElement("div");
+            cardImg.className = "card-image";
+
+            var img = document.createElement("img");
+            img.src = track.album.images[0].url;
+            cardImg.appendChild(img);
+
+            var cardContent = document.createElement("div");
+            cardContent.className = "card-content";
+
+            var title = document.createElement("p");
+            title.appendChild(document.createTextNode(track.name));
+            title.className ="p-card";
+            var album = document.createElement("p");
+            album.appendChild(document.createTextNode(track.artists[0].name));
+            album.className ="p-card";
+            var artist = document.createElement("p");
+            artist.className ="p-card";
+            artist.appendChild(document.createTextNode(track.album.name));
+
+            cardContent.appendChild(title);
+            cardContent.appendChild(album);
+            cardContent.appendChild(artist);
+
+            //PLAY & FAVORITE BUTTON
+
+            /****
+             *
+             */
+
+            var div_buttons = document.createElement("div");
+            div_buttons.className = "card-action";
+            div_buttons.value = numTrack;
+
+            var play_content = document.createElement("button");
+            play_content.id= "button-play-pause";
+            play_content.value="doPlay";
 
 
 
-            var containerThumbnail = document.createElement("div");
-            containerThumbnail.id = "containerThumbnail";
-            containerThumbnail.className = "col-lg-4 col-sm-6";
+            play_content.className = "btn-floating waves-effect btn";
+            var play = document.createElement("i");
+            play.className="material-icons";
+            play_content.addEventListener("click", Listener.eventPlay, false);
+            play.appendChild(document.createTextNode("play_arrow"));
+            play_content.appendChild(play);
 
-            //IMPORTANT! Click not implemented yet.
-            var clickLink = document.createElement("a");
-            clickLink.className="portfolio-box"
-            var imgSong = document.createElement("img");
-            imgSong.className="img-responsive";
-            imgSong.alt="";
-            imgSong.src=track.album.images[0].url;
+            div_buttons.appendChild(play_content);
+
+            //
+
+            var div_card = document.createElement("div");
+            div_card.className = "card";
+            div_card.appendChild(cardImg);
+            div_card.appendChild(cardContent);
+            div_card.appendChild(div_buttons);
+
+            var div_col = document.createElement("div");
+            div_col.className = "col s12";
+            div_col.appendChild(div_card);
+
+            var div_row = document.createElement("div");
+            div_row.className = "row";
+            div_row.appendChild(div_col);
+
+            var div_col_ext = document.createElement("div");
+            div_col_ext.className = "col s12 m6 l3";
+            div_col_ext.appendChild(div_row);
 
 
-            clickLink.appendChild(imgSong);
-            containerThumbnail.appendChild(clickLink);
 
-            document.getElementById("container-search").appendChild(containerThumbnail);
-            console.log(document.getElementById("container-search"));
+            section.appendChild(div_col_ext);
+
 
         }
     }
     var Search = {
+        tracks: "",
         addListener: function() {
             var button = document.getElementById("search-button");
 
@@ -100,7 +138,7 @@
         },
         searchSong: function(song) {
            // var myRequest = prepareSearchRequest("the killers", "track", "5");
-            var myRequest = spotify.prepareSearchRequest(song, "track", "6");
+            var myRequest = spotify.prepareSearchRequest(song, "track", "8");
 
              spotify.spotifySearch(myRequest, Search.getTracks);
 
@@ -110,6 +148,8 @@
 
             //Update Layout
             Layout.setImagesSearch(json_response_tracks.tracks.items);
+            this.tracks= json_response_tracks.tracks.items;
+            console.log(this.tracks);
         }
 
     }
@@ -131,7 +171,44 @@
                 Search.searchSong(textField.value);
             }
 
+        },
+
+        eventPlay: function(event) {
+
+           // var buttonPlayPause = document.getElementById("button-play-pause");
+            var buttonPlayPause = event.srcElement.parentNode;
+
+            //if (buttonPlayPause.value != null) {
+                buttonPlayPause.removeChild(buttonPlayPause.firstChild);
+
+                var icon = document.createElement("i");
+                icon.className = "material-icons";
+
+                if (buttonPlayPause.value == "doPlay") {
+                    icon.appendChild(document.createTextNode("pause"));
+                    buttonPlayPause.appendChild(icon);
+                    //event.srcElement.appendChild(icon);
+                    console.log(buttonPlayPause.parentNode.value);
+                    console.log(buttonPlayPause);
+                    buttonPlayPause.value= "doPause";
+
+
+
+                    //PLAY SONG
+                } else {
+                    icon.appendChild(document.createTextNode("play_arrow"));
+                    //event.srcElement.appendChild(icon);
+                    buttonPlayPause.appendChild(icon);
+                    console.log(buttonPlayPause.parentNode.value);
+                    buttonPlayPause.value= "doPlay";
+
+                    //PAUSE SONG
+                }
+
+            //}
+
         }
+
 
     }
 

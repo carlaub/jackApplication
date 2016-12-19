@@ -45,7 +45,7 @@ var Youtube = function () {
             searchText = searchText.replace(/\s+/g,"+"); // replaces whitespaces by '+'
 
             var request = apiLink + "search?part=snippet&videoEmbeddable=true&order=viewCount&q=" + searchText
-                + "&type=video" + "&maxResults=" + defaultLimit + "&key=" + googleApiKey + "&part=snippet,player";
+                + "&type=video" + "&maxResults=" + defaultLimit + "&key=" + googleApiKey + "&part=snippet,playerYT";
 
             sendRequest(request, callback);
         }

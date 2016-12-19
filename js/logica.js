@@ -11,8 +11,12 @@
 
 
     var spotify = Spotify();
+    var players = Player();
+
 
     var Layout = {
+
+
         setImagesSearch: function(tracks) {
 
             //borrar busqueda anterior
@@ -45,7 +49,10 @@
             } else {
                 for (var i = 0; i < 8; i ++) {
                     Layout.renderThumbnail(tracks[i], i);
+                    //players.add(i, 'Xa0Q0J5tOP0');
+                    player.holas();
                 }
+                console.log(players);
             }
 
         },
@@ -129,8 +136,10 @@
 
         }
     }
+
+    var tracks;
     var Search = {
-        tracks: "",
+        //tracks: "",
         addListener: function() {
             var button = document.getElementById("search-button");
 
@@ -148,8 +157,13 @@
 
             //Update Layout
             Layout.setImagesSearch(json_response_tracks.tracks.items);
-            this.tracks= json_response_tracks.tracks.items;
-            console.log(this.tracks);
+            tracks= json_response_tracks.tracks.items;
+
+
+        },
+        getTrack: function(idTrack) {
+            console.log(tracks);
+            return tracks[idTrack];
         }
 
     }
@@ -189,10 +203,14 @@
                     buttonPlayPause.appendChild(icon);
                     //event.srcElement.appendChild(icon);
                     console.log(buttonPlayPause.parentNode.value);
-                    console.log(buttonPlayPause);
+
+                    //id is the position of the track into tracks Array in Search obj
+                    var id_track = buttonPlayPause.parentNode.value;
+
                     buttonPlayPause.value= "doPause";
 
-
+                    var trackInfo = Search.getTrack(id_track);
+                    console.log(trackInfo);
 
                     //PLAY SONG
                 } else {

@@ -73,6 +73,7 @@ var Youtube = function () {
 
                     firstResult = result.items[0];
                     alert("first result: " + firstResult["snippet"]["title"]);
+                    return firstResult["snippet"]["title"];
                 }
             });
         }

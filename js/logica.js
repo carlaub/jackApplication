@@ -51,10 +51,9 @@
             } else {
                 for (var i = 0; i < 8; i ++) {
                     Layout.renderThumbnail(tracks[i], i);
-                    //players.add(i, 'Xa0Q0J5tOP0');
-                    //player.holas();
+                    players.add(i, 'Xa0Q0J5tOP0');
+
                 }
-                console.log(players);
             }
 
         },
@@ -250,7 +249,8 @@
         },
         playSong: function (track) {
 
-            youtube.play(Track.getArtist(track), Track.getName(track));
+            var song = youtube.play(Track.getArtist(track), Track.getName(track));
+            console.log(song);
         }
     }
 

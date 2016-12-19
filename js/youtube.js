@@ -36,18 +36,45 @@ var Youtube = function () {
         request.send();
     }
 
+    function youtubeSearch(searchText, callback) {
+        var defaultLimit = 1;
+
+
+        searchText = searchText.replace(/\s+/g,"+"); // replaces whitespaces by '+'
+
+        console.log("search: " + searchText);
+
+        var request = apiLink + "search?part=snippet&videoEmbeddable=true&order=viewCount&q=" + searchText
+            + "&type=video" + "&maxResults=" + defaultLimit + "&key=" + googleApiKey + "&part=snippet,playerYT";
+
+        sendRequest(request, callback);
+    }
+
 
     return {
 
-        youtubeSearch: function(searchText, callback) {
-            var defaultLimit = 1;
+        /**
+         *
+         * @param artist name of the artist
+         * @param song   name of the song
+         */
+        play: function(artist, song) {
 
-            searchText = searchText.replace(/\s+/g,"+"); // replaces whitespaces by '+'
+            alert("on play action");
 
-            var request = apiLink + "search?part=snippet&videoEmbeddable=true&order=viewCount&q=" + searchText
-                + "&type=video" + "&maxResults=" + defaultLimit + "&key=" + googleApiKey + "&part=snippet,playerYT";
+            youtubeSearch(artist + " " + song, function(data) {
 
-            sendRequest(request, callback);
+                result = JSON.parse(data);
+                if (result.items.length == 0)
+
+                    alert("No se ha podido reproducir la canción seleccionada.");
+                else {
+
+
+                    firstResult = result.items[0];
+                    alert("first result: " + firstResult["snippet"]["title"]);
+                }
+            });
         }
     }
 };

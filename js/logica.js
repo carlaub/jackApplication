@@ -12,7 +12,9 @@
 
     var spotify = Spotify();
     var players = Player();
+    var youtube = Youtube();
 
+    const SONG_INFO = "card-content";
 
     var Layout = {
 
@@ -50,7 +52,7 @@
                 for (var i = 0; i < 8; i ++) {
                     Layout.renderThumbnail(tracks[i], i);
                     //players.add(i, 'Xa0Q0J5tOP0');
-                    player.holas();
+                    //player.holas();
                 }
                 console.log(players);
             }
@@ -68,7 +70,7 @@
             cardImg.appendChild(img);
 
             var cardContent = document.createElement("div");
-            cardContent.className = "card-content";
+            cardContent.className = SONG_INFO;
 
             var title = document.createElement("p");
             title.appendChild(document.createTextNode(track.name));
@@ -104,6 +106,7 @@
             var play = document.createElement("i");
             play.className="material-icons";
             play_content.addEventListener("click", Listener.eventPlay, false);
+
             play.appendChild(document.createTextNode("play_arrow"));
             play_content.appendChild(play);
 
@@ -137,6 +140,22 @@
         }
     }
 
+    var Track = {
+
+        getName: function (track) {
+
+            return track["name"];
+        },
+        getArtist: function (track) {
+
+
+            console.log("artist: " + track["artists"]);
+            return track["artists"][0]["name"];
+        }
+
+    }
+
+
     var tracks;
     var Search = {
         //tracks: "",
@@ -157,12 +176,12 @@
 
             //Update Layout
             Layout.setImagesSearch(json_response_tracks.tracks.items);
-            tracks= json_response_tracks.tracks.items;
+            tracks = json_response_tracks.tracks.items;
 
 
         },
         getTrack: function(idTrack) {
-            console.log(tracks);
+
             return tracks[idTrack];
         }
 
@@ -187,11 +206,12 @@
 
         },
 
-        eventPlay: function(event) {
+        eventPlay: function (event) {
 
            // var buttonPlayPause = document.getElementById("button-play-pause");
             var buttonPlayPause = event.srcElement.parentNode;
 
+            console.log("button play pause: " + buttonPlayPause);
             //if (buttonPlayPause.value != null) {
                 buttonPlayPause.removeChild(buttonPlayPause.firstChild);
 
@@ -199,13 +219,15 @@
                 icon.className = "material-icons";
 
                 if (buttonPlayPause.value == "doPlay") {
+
                     icon.appendChild(document.createTextNode("pause"));
                     buttonPlayPause.appendChild(icon);
                     //event.srcElement.appendChild(icon);
-                    console.log(buttonPlayPause.parentNode.value);
 
                     //id is the position of the track into tracks Array in Search obj
                     var id_track = buttonPlayPause.parentNode.value;
+                    // now we send the request to youtube to play the track selected
+                    Listener.playSong(Search.getTrack(id_track));
 
                     buttonPlayPause.value= "doPause";
 
@@ -225,9 +247,11 @@
 
             //}
 
+        },
+        playSong: function (track) {
+
+            youtube.play(Track.getArtist(track), Track.getName(track));
         }
-
-
     }
 
     var Application = {

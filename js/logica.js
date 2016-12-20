@@ -317,12 +317,19 @@
 
             var song = youtube.play(Track.getArtist(track), Track.getName(track));
             console.log(song);
+        },
+
+        eventCancionesRecomendadas: function () {
+            alert("cancionesRecomendadas");
         }
     }
 
     var Application = {
         start: function() {
             Search.addListener();
+
+            var aux = document.getElementById("canciones-recomendadas");
+            Listener.add (aux, "click", Listener.eventCancionesRecomendadas, false);
         }
     }
 

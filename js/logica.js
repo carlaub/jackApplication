@@ -8,11 +8,9 @@
 
 
 (function() {
-
+    console.log("ADIOS");
 
     var spotify = Spotify();
-    var players = Player();
-    var youtube = Youtube();
 
     const SONG_INFO = "card-content";
 
@@ -51,7 +49,8 @@
             } else {
                 for (var i = 0; i < 8; i ++) {
                     Layout.renderThumbnail(tracks[i], i);
-                    players.add(i, 'Xa0Q0J5tOP0');
+
+                    //players.add(i, 'Xa0Q0J5tOP0');
 
                 }
             }
@@ -98,6 +97,8 @@
             var play_content = document.createElement("button");
             play_content.id= "button-play-pause";
             play_content.value="doPlay";
+            play_content.dataset.playing="false";
+            play_content.dataset.idNum=numTrack;
 
 
 
@@ -180,11 +181,53 @@
 
         },
         getTrack: function(idTrack) {
-
+            console.log(tracks[idTrack]);
             return tracks[idTrack];
         }
 
     }
+
+    var player = {
+        loadSong: function (src) {
+            var playerAudio = document.getElementById("player-audio");
+            playerAudio.src = src;
+            playerAudio.load();
+            playerAudio.play();
+
+        },
+        play: function() {
+            var playerAudio = document.getElementById("player-audio");
+            playerAudio.play();
+
+        },
+        pause: function() {
+            var playerAudio = document.getElementById("player-audio");
+            playerAudio.pause();
+
+        },
+        muteButtons: function() {
+            var buttons = document.getElementsByClassName("btn-floating waves-effect btn");
+            console.log("length: "+buttons.length);
+            for (var i = 0; i < buttons.length; i++) {
+                console.log("entra2");
+                buttons[i].dataset.playing = "false";
+
+                buttons[i].removeChild(buttons[i].firstChild);
+
+                var icon = document.createElement("i");
+                icon.className = "material-icons";
+
+                icon.appendChild(document.createTextNode("play_arrow"));
+
+                buttons[i].appendChild(icon);
+
+                buttons[i].value= "doPlay";
+
+                player.pause();
+
+            }
+        }
+    };
 
 
     var Listener = {
@@ -219,19 +262,40 @@
 
                 if (buttonPlayPause.value == "doPlay") {
 
+                    var id_track = buttonPlayPause.parentNode.value;
+
+                    var trackInfo = Search.getTrack(id_track);
+
+                    if(buttonPlayPause.dataset.playing != "true") {
+                        console.log("playing false");
+                        player.muteButtons();
+                        player.loadSong(trackInfo.preview_url);
+                        buttonPlayPause.dataset.playing = "true";
+                    } else {
+
+                        player.play();
+
+                    }
+                    buttonPlayPause.removeChild(buttonPlayPause.firstChild);
                     icon.appendChild(document.createTextNode("pause"));
                     buttonPlayPause.appendChild(icon);
                     //event.srcElement.appendChild(icon);
 
                     //id is the position of the track into tracks Array in Search obj
-                    var id_track = buttonPlayPause.parentNode.value;
+
                     // now we send the request to youtube to play the track selected
-                    Listener.playSong(Search.getTrack(id_track));
+                    //Listener.playSong(Search.getTrack(id_track));
 
                     buttonPlayPause.value= "doPause";
 
-                    var trackInfo = Search.getTrack(id_track);
+                    console.log(buttonPlayPause);
+
                     console.log(trackInfo);
+
+
+
+
+
 
                     //PLAY SONG
                 } else {
@@ -240,6 +304,8 @@
                     buttonPlayPause.appendChild(icon);
                     console.log(buttonPlayPause.parentNode.value);
                     buttonPlayPause.value= "doPlay";
+
+                    player.pause();
 
                     //PAUSE SONG
                 }
@@ -267,7 +333,4 @@
         Application.start(),
         false
     );
-
-
-
 }());

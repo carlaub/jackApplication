@@ -12,6 +12,7 @@
 
 
         <title>Jack App</title>
+        <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
 
         <!--Import Google Icon Font-->
         <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -52,6 +53,12 @@
     <div id="tab2" class="col s12"></div>
     <div id="tab3" class="col s12"></div>
 
+
+    <div data-video="VIDEO_ID"
+         data-autoplay="0"
+         data-loop="1"
+         id="youtube-audio">
+    </div>
 
 
     <section  id="general">
@@ -140,10 +147,14 @@
 
         </div>
 
+
+
     </section>
 
 
+    <audio id="player-audio">
 
+    </audio>
 
 
 
@@ -178,14 +189,18 @@
     </footer>
 
     <!--Import jQuery before materialize.js-->
-    <script src="https://www.youtube.com/iframe_api"></script>
+    <!--<script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="js/materialize.min.js"></script>
     <!--Java Script-->
     <script type="text/javascript" src="js/Player.js"></script>
-    <script type="text/javascript" src="js/youtube.js"></script>
+    <!--<script type="text/javascript" src="js/youtube.js"></script>-->
     <script type="text/javascript" src="js/spotify.js"></script>
     <script type="text/javascript" src="js/logica.js"></script>
 
 
+
 </html>
+
+
+

@@ -1,10 +1,47 @@
 
 
+// var Youtube = function () {
+//
+//     var googleApiKey = "AIzaSyDRKGTFi1upX-OWZI_EoFTB_Bj1vkE6vXw";
+//     var apiLink = "https://www.googleapis.com/youtube/v3/";
+//
+//     function youtubeSearch(searchText) {
+//
+//
+//         var defaultLimit = 1;
+//
+//
+//          searchText = searchText.replace(/\s+/g,"+"); // replaces whitespaces by '+'
+//
+//          console.log("search: " + searchText);
+//
+//          var myrequest = apiLink + "search?part=snippet&videoEmbeddable=true&order=viewCount&q=" + searchText
+//              + "&type=video" + "&maxResults=" + defaultLimit + "&key=" + googleApiKey + "&part=snippet,playerYT";
+//         var request = new XMLHttpRequest();
+//
+//         request.open("GET", myrequest, false);
+//         request.send();
+//         var result = JSON.parse(request.responseText);
+//         return result;
+//
+//
+//     }
+//
+//     return {
+//
+//         play: function(artist, song) {
+//            var song= youtubeSearch (artist+" "+song);
+//             return song;
+//         }
+//     }
+// };
+
+
 var Youtube = function () {
 
     var googleApiKey = "AIzaSyDRKGTFi1upX-OWZI_EoFTB_Bj1vkE6vXw";
     var apiLink      = "https://www.googleapis.com/youtube/v3/";
-
+    //var player = Player();
 
     /**
      * Sends an asynchronous request and, if everything goes well, sends the data to the
@@ -64,18 +101,23 @@ var Youtube = function () {
 
             youtubeSearch(artist + " " + song, function(data) {
 
-                result = JSON.parse(data);
+                var result = JSON.parse(data);
                 if (result.items.length == 0)
 
                     alert("No se ha podido reproducir la canción seleccionada.");
                 else {
 
 
-                    firstResult = result.items[0];
-                    alert("first result: " + firstResult["snippet"]["title"]);
-                    return firstResult["snippet"]["title"];
+                    var firstResult = result.items[0];
+                    //alert("first result: " + firstResult);
+                    console.log(firstResult);
+                    //player.add(0, firstResult["id"]["videoId"]);
+                    //alert("first result: " + firstResult["snippet"]["title"]);
+                    //return firstResult["snippet"]["title"];
+
                 }
             });
-        }
+        },
+
     }
 };

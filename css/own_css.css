@@ -41,3 +41,8 @@ main{
     white-space:nowrap;
     text-overflow: ellipsis;
 }
+.waves-effect {
+
+    transition: .1s ease-out;
+}
+

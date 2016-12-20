@@ -17,7 +17,7 @@
     var Layout = {
 
 
-        setImagesSearch: function(tracks) {
+        setImages: function(tracks, numTracks) {
 
             //borrar busqueda anterior
             var generalSection=document.getElementById("general");
@@ -44,10 +44,10 @@
 
             console.log(tracks);
 
-            if (tracks.length < 8) {
+            if (tracks.length < numTracks) {
                 alert("No hay resultados para su búsqueda.");
             } else {
-                for (var i = 0; i < 8; i ++) {
+                for (var i = 0; i < numTracks; i ++) {
                     Layout.renderThumbnail(tracks[i], i);
 
                     //players.add(i, 'Xa0Q0J5tOP0');
@@ -175,7 +175,7 @@
             var json_response_tracks = JSON.parse(responseData);
 
             //Update Layout
-            Layout.setImagesSearch(json_response_tracks.tracks.items);
+            Layout.setImages(json_response_tracks.tracks.items, 8);
             tracks = json_response_tracks.tracks.items;
 
 

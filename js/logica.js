@@ -110,9 +110,25 @@
             play.appendChild(document.createTextNode("play_arrow"));
             play_content.appendChild(play);
 
-            div_buttons.appendChild(play_content);
+            var favorite_content = document.createElement("button");
+            favorite_content.id = "button-favorite";
 
-            //
+            favorite_content.className = "btn-floating waves-effect btn";
+            var favorite = document.createElement("i");
+            favorite.className="material-icons";
+            favorite_content.addEventListener("click", Listener.eventFavorite, false);
+            favorite_content.className = "btn-floating waves-effect btn btn-favorite";
+            favorite_content.dataset.favorite ="false";
+
+            var favorite = document.createElement("i");
+            favorite.className ="material-icons";
+
+            favorite.appendChild(document.createTextNode("loyalty"));
+            favorite_content.appendChild(favorite);
+
+            div_buttons.appendChild(play_content);
+            div_buttons.appendChild(favorite_content);
+
 
             var div_card = document.createElement("div");
             div_card.className = "card";
@@ -312,6 +328,17 @@
 
             //}
 
+        },
+
+        eventFavorite: function () {
+            var buttonFavorite=event.srcElement.parentNode;
+
+            console.log(buttonFavorite.dataset.favorite);
+
+            if (buttonFavorite.dataset.favorite == true) {
+                buttonFavorite.dataset.favorite = false;
+
+            }
         },
         playSong: function (track) {
 

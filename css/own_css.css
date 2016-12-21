@@ -46,3 +46,20 @@ main{
     transition: .1s ease-out;
 }
 
+.btn-favorite {
+    float: right;
+    background-color: #992c2a;
+}
+
+
+.btn-favorite:hover {
+    float: right;
+    background-color: #992c2a;
+}
+.btn-floating:focus {
+    background-color: #d90726;
+}
+
+.btn-favortite.added {
+    background-color: #d90726;
+}

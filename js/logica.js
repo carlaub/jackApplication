@@ -8,12 +8,12 @@
 
 
 (function() {
-    console.log("ADIOS");
 
     var spotify = Spotify();
+    var recommend = Recommendation();
 
     const SONG_INFO = "card-content";
-
+    var recommendations=[];
     var Layout = {
 
 
@@ -65,6 +65,8 @@
 
             var img = document.createElement("img");
             img.src = track.album.images[0].url;
+            img.width = 640;
+            img.height = 240;
             cardImg.appendChild(img);
 
             var cardContent = document.createElement("div");
@@ -78,7 +80,7 @@
             album.className ="p-card";
             var artist = document.createElement("p");
             artist.className ="p-card";
-            artist.appendChild(document.createTextNode(track.album.name));
+            if (track.album.name != null) artist.appendChild(document.createTextNode(track.album.name));
 
             cardContent.appendChild(title);
             cardContent.appendChild(album);
@@ -151,6 +153,32 @@
             section.appendChild(div_col_ext);
 
 
+        },
+        renderSection: function(title){
+            //borrar busqueda anterior
+            var generalSection=document.getElementById("general");
+            var section=document.getElementById("section-id");
+
+
+            if (section != null) {
+                section.parentNode.removeChild(section);
+            }
+
+            var sectionTitle = document.createElement("h3");
+
+            section = document.createElement("div");
+            section.id = "section-id";
+
+            sectionTitle.appendChild(document.createTextNode(title));
+            section.appendChild(sectionTitle);
+
+            section.className="row";
+
+
+            generalSection.appendChild(section);
+
+
+
         }
     }
 
@@ -165,6 +193,11 @@
 
             console.log("artist: " + track["artists"]);
             return track["artists"][0]["name"];
+        },
+        JSONtoTrack: function (json_response) {
+            var track = JSON.parse(json_response);
+            console.log("track:");
+            console.log(track);
         }
 
     }
@@ -197,6 +230,14 @@
         getTrack: function(idTrack) {
             console.log(tracks[idTrack]);
             return tracks[idTrack];
+        }
+    }
+
+    var Recommendations = {
+        addRecommendation: function (JSON_track) {
+            var track_recommen = JSON.parse(JSON_track);
+            var num = recommendations.length;
+            recommendations[num] = track_recommen.tracks.items[0];
         }
     }
 
@@ -345,8 +386,21 @@
 
         eventCancionesRecomendadas: function () {
             alert("cancionesRecomendadas");
+            Layout.renderSection("Canciones Recomendadas");
+
+            for (var i = 0; i < recommendations.length; i++) {
+                console.log("track"+i+":");
+                console.log(recommendations[i]);
+                if (recommendations[i] != null) Layout.renderThumbnail(recommendations[i], i);
+
+            }
+
+
         }
     }
+
+    recommend.getRecommendedTracks("spotify:track:6vQNfrrrtwgeqg2tty5garfSgWcm74KEZYfD", "ABBA",
+        "Mamma mia", "5", Recommendations.addRecommendation);
 
     var Application = {
         start: function() {
@@ -358,9 +412,8 @@
     }
 
 
-    var recommend = Recommendation();
-    recommend.getRecommendedTracks("spotify:track:6vQNfrrrtwgeqg2tty5garfSgWcm74KEZYfD", "ABBA",
-        "Mamma mia", "5" /*falta parametro callback*/);
+
+
 
     //Init application when DOM is loaded
     Listener.add (

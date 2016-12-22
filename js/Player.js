@@ -2,10 +2,6 @@
  * Created by karlaurrea on 13/12/16.
  */
 
-
-
-
-
 function onYouTubeIframeAPIReady() {
 
     var player;

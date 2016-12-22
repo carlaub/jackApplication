@@ -40,6 +40,7 @@ var Spotify = function () {
             }
             if (request.status === 200) {
 
+                console.log("spotify request response: " + request.responseText);
                 callback(request.responseText);
 
             } else {

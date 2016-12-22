@@ -114,8 +114,6 @@
             favorite_content.id = "button-favorite";
 
             favorite_content.className = "btn-floating waves-effect btn";
-            var favorite = document.createElement("i");
-            favorite.className="material-icons";
             favorite_content.addEventListener("click", Listener.eventFavorite, false);
             favorite_content.className = "btn-floating waves-effect btn btn-favorite";
             favorite_content.dataset.favorite ="false";
@@ -200,7 +198,6 @@
             console.log(tracks[idTrack]);
             return tracks[idTrack];
         }
-
     }
 
     var player = {
@@ -359,6 +356,11 @@
             Listener.add (aux, "click", Listener.eventCancionesRecomendadas, false);
         }
     }
+
+
+    var recommend = Recommendation();
+    recommend.getRecommendedTracks("spotify:track:6vQNfrrrtwgeqg2tty5garfSgWcm74KEZYfD", "ABBA",
+        "Mamma mia", "5" /*falta parametro callback*/);
 
     //Init application when DOM is loaded
     Listener.add (

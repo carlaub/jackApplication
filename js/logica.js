@@ -16,6 +16,30 @@
     const ID_PRELOAD_COMPONENT  = "preload-section";
 
     var recommendations=[];
+
+    /**
+     * @type {Array} Array of sections. Each section represents an array of tracks.
+     */
+    var sectionTracks = [];
+
+
+    /**
+     * Section indexes.
+     */
+    const Section = {
+
+        RECOMMENDED_ARTISTS : 1,
+        RECOMMENDED_SONGS   : 2,
+        PLAYLIST            : 3,
+        SEARCHES            : 4
+    };
+
+    /**
+     * @type {number} The current tab selected on the website. By default the first one.
+     */
+    var currentSection = Section.RECOMMENDED_ARTISTS;
+
+
     var Layout = {
 
 
@@ -261,7 +285,6 @@
     }
 
 
-    var tracks;
     var Search = {
         //tracks: "",
         addListener: function() {
@@ -279,15 +302,15 @@
         getTracks: function(responseData) {
             var json_response_tracks = JSON.parse(responseData);
 
+            currentSection = Section.SEARCHES;
             //Update Layout
             Layout.setImages(json_response_tracks.tracks.items, 8);
-            tracks = json_response_tracks.tracks.items;
-
-
+            // TODO: Check if the method is used generically
+            sectionTracks[Section.SEARCHES] = json_response_tracks.tracks.items;
         },
         getTrack: function(idTrack) {
-            console.log(tracks[idTrack]);
-            return tracks[idTrack];
+            console.log("get track: " + sectionTracks[currentSection][idTrack]);
+            return sectionTracks[currentSection][idTrack];
         }
     }
 
@@ -297,6 +320,7 @@
             var track_recommen = JSON.parse(JSON_track);
             var num = recommendations.length;
             recommendations[num] = track_recommen.tracks.items[0];
+            sectionTracks[Section.RECOMMENDED_SONGS] = recommendations;
             Listener.eventCancionesRecomendadas();
             Layout.removePreload();
         }
@@ -360,7 +384,6 @@
 
                 Search.searchSong(textField.value);
             }
-
         },
 
         eventPlay: function (event) {
@@ -443,16 +466,32 @@
         eventCancionesRecomendadas: function () {
             //alert("cancionesRecomendadas");
             Layout.renderSection("Canciones Recomendadas");
+            currentSection = Section.RECOMMENDED_SONGS;
 
-            tracks = recommendations;
+            //tracks = recommendations;
 
             for (var i = 0; i < recommendations.length; i++) {
                 console.log("track"+i+":");
                 console.log(recommendations[i]);
                 if (recommendations[i] != null) Layout.renderThumbnail(recommendations[i], i);
             }
+        },
+        eventSearchesTabSelected: function() {
+
+            Layout.renderSection("Resultados de tu búsqueda");
+            currentSection = Section.SEARCHES;
+
+            if (sectionTracks[currentSection] == null)
+                alert("Todavía no has realizado ninguna búsqueda.");
+            else {
+                for (var i = 0; i < sectionTracks[currentSection].length; i++) {
+
+                    Layout.renderThumbnail(sectionTracks[currentSection][i], i);
+                }
+            }
+            Layout.removePreload();
         }
-    }
+    };
 
     recommend.getRecommendedTracks("spotify:track:6vQNfrrrtwgeqg2tty5garfSgWcm74KEZYfD", "ABBA",
         "Mamma mia", "5", Recommendations.addRecommendation);
@@ -463,9 +502,11 @@
 
             var aux = document.getElementById("canciones-recomendadas");
             Listener.add (aux, "click", Listener.eventCancionesRecomendadas, false);
-        }
-    }
 
+            var searchesTab = document.getElementById("tab-searches");
+            Listener.add(searchesTab, "click", Listener.eventSearchesTabSelected, false);
+        }
+    };
 
 
     //Init application when DOM is loaded

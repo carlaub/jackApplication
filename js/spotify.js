@@ -29,8 +29,6 @@ var Spotify = function () {
 
     function sendRequest(myRequest, callback) {
 
-        console.log("on sendRequest: " + myRequest);
-
         var request = new XMLHttpRequest();
 
         request.onreadystatechange = function() {
@@ -40,7 +38,6 @@ var Spotify = function () {
             }
             if (request.status === 200) {
 
-                console.log("spotify request response: " + request.responseText);
                 callback(request.responseText);
 
             } else {

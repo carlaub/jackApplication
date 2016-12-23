@@ -15,13 +15,11 @@
  *
  */
 
-
-
-
 var Recommendation = function() {
 
     const API_URL_TRACKS_RECOMMEND  = "http://musicovery.com/api/V3/";
     const RESPONSE_UNKNOWN_TRACK    = "330";
+    const RESPONSE_MAX_REQUESTS     = "103";
     const SECONDARY_SERVICE         = "deezer";
     const ENDPOINT_TRACK            = "track.php?";
     const ENDPOINT_PLAYLIST         = "playlist.php?";
@@ -44,8 +42,6 @@ var Recommendation = function() {
      */
     function sendRequest(myRequest, callback) {
 
-        console.log("on sendRequest: " + myRequest);
-
         var request = new XMLHttpRequest();
 
         request.onreadystatechange = function() {
@@ -55,7 +51,7 @@ var Recommendation = function() {
             }
             if (request.status === 200) {
 
-                console.log("data obtained: " + request.responseText);
+                console.log(request.responseText);
                 callback(JSON.parse(request.responseText));
             }
             else console.log("error during the request: " + request.status);
@@ -69,15 +65,9 @@ var Recommendation = function() {
 
     function onDeezerRecommendedTracksResponse(data, renderCallback) {
 
-        console.log("on " + SECONDARY_SERVICE + " recommended tracks response");
-
         if (data["root"]["response"]["anwser"] === "valid" && data["root"]["totalResults"] !== "0") {
 
-            console.log("recommendations found.");
-
             var length = parseInt(data["root"]["request"]["resultsnumber"]);
-
-            console.log("length: " + length);
 
             // the array of similar tracks
             var tracks = data["root"]["tracks"]["track"];
@@ -85,11 +75,8 @@ var Recommendation = function() {
 
                 var spotify = Spotify();
 
-                console.log("loop");
                 var track = tracks[i];
                 var artist = track["artist"]["name"];
-
-                console.log("loading track: " + artist);
 
                 var request = spotify.prepareSearchRequest(artist + " " + track["title"], "track", "1");
                 spotify.spotifySearch(request, renderCallback);
@@ -101,18 +88,13 @@ var Recommendation = function() {
 
     function onDeezerSearchResponse(data, renderCallback) {
 
-        console.log("Search result: " + data.toString());
-
         if (data["root"]["response"]["anwser"] === "valid" && data["root"]["totalResults"] !== "0") {
 
             var secondaryTrackId = data["root"]["tracks"]["track"][0][SECONDARY_SERVICE]["id"];
 
-            console.log("deezer track id : " + secondaryTrackId);
-
             var newRecommendationsRequest = API_URL_TRACKS_RECOMMEND + ENDPOINT_PLAYLIST +
                                                 prepareParameters("getfromtrack", SECONDARY_SERVICE + ":track:"
                                                                     + secondaryTrackId, "id:" + SECONDARY_SERVICE, null);
-
             newRecommendationsRequest += "&resultsnumber=" + MAX_RESULTS;
 
             sendRequest(newRecommendationsRequest, function(data) {
@@ -125,12 +107,8 @@ var Recommendation = function() {
 
     function onSpotifyRecommendedTracksResponse(artist, song, data, renderCallback) {
 
-        console.log("data obtained: " + data.toString());
-
         // we could not find the spotify track directly in the db, so we will need more steps
         if (data["root"]["response"]["code"] === RESPONSE_UNKNOWN_TRACK) {
-
-            console.log("cannot find the track in the database, let's do a deepest search!");
 
             var request = API_URL_TRACKS_RECOMMEND + ENDPOINT_TRACK + "fct=search&title=" + song.replace(/\s+/g,"+")
                 + "&artistname=" + artist.replace(/\s+/g,"+") + "&format=json&bucket=id:" + SECONDARY_SERVICE;
@@ -140,14 +118,17 @@ var Recommendation = function() {
 
                 onDeezerSearchResponse(data, renderCallback);
             });
+
+        } else if (data["root"]["response"]["code"] == RESPONSE_MAX_REQUESTS) {
+
+            console.log("No se pueden realizar más peticiones porque ha superado el máximo" +
+                " permitido por la API.");
         }
         else {
-
             console.log("spotify track found! let's parse the result and be happy :)");
             renderCallback(data);
         }
     }
-
 
     return {
 

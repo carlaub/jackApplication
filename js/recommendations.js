@@ -1,5 +1,18 @@
 /**
  * Created by Albertpv on 21/12/16.
+ *
+ *
+ * @author Jorge Melguizo Torres
+ * @author Carla Urrea Blazquez
+ * @author Albert Pernia Vazquez
+ *
+ * Use example:
+ *
+ *  var recommend = Recommendation();
+ *
+ *  recommend.getRecommendedTracks("spotify:track:6vQNfrrrtwgeqg2tty5garfSgWcm74KEZYfD", "ABBA",
+ *  "Mamma mia", "5", Recommendations.addRecommendation);
+ *
  */
 
 
@@ -131,6 +144,7 @@ var Recommendation = function() {
         else {
 
             console.log("spotify track found! let's parse the result and be happy :)");
+            renderCallback(data);
         }
     }
 
@@ -145,6 +159,7 @@ var Recommendation = function() {
          * @param artist            The name of the artist
          * @param song              The name of the song
          * @param limit
+         * @param renderCallback
          */
         getRecommendedTracks: function(spotifyTrackId, artist, song, limit, renderCallback) {
 

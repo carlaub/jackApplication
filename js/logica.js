@@ -13,8 +13,11 @@
     var recommend = Recommendation();
 
     const SONG_INFO = "card-content";
+    const ID_PRELOAD_COMPONENT  = "preload-section";
+
     var recommendations=[];
     var Layout = {
+
 
 
         setImages: function(tracks, numTracks) {
@@ -33,14 +36,12 @@
             section = document.createElement("div");
             section.id = "section-id";
 
-            sectionTitle.appendChild(document.createTextNode("Busqueda"));
+            sectionTitle.appendChild(document.createTextNode("Búsqueda"));
             section.appendChild(sectionTitle);
 
-            section.className="row";
-
+            section.className = "row";
 
             generalSection.appendChild(section);
-
 
             console.log(tracks);
 
@@ -98,9 +99,9 @@
 
             var play_content = document.createElement("button");
             play_content.id= "button-play-pause";
-            play_content.value="doPlay";
-            play_content.dataset.playing="false";
-            play_content.dataset.idNum=numTrack;
+            play_content.value = "doPlay";
+            play_content.dataset.playing = "false";
+            play_content.dataset.idNum = numTrack;
 
 
 
@@ -154,6 +155,8 @@
 
 
         },
+
+        // to load the recommendations section
         renderSection: function(title){
             //borrar busqueda anterior
             var generalSection=document.getElementById("general");
@@ -174,11 +177,66 @@
 
             section.className="row";
 
+            // if there arent recommendations loaded wh show a circular progress while
+            // any recommendation is visible
+            if (recommendations == null || recommendations.length == 0) {
+
+                var preload = Layout.renderPreload();
+                section.appendChild(preload);
+            }
 
             generalSection.appendChild(section);
 
+        },
+        /**
+         * @description Renders a circular progress component.
+         *
+         * @returns {Element} To be added into a DOC node.
+         */
+        renderPreload: function() {
 
+            var progress = document.createElement("div");
+            progress.className = "preloader-wrapper small active";
+            progress.id = ID_PRELOAD_COMPONENT;
 
+            var spinner = document.createElement("div");
+            spinner.className = "spinner-layer spinner-green-only";
+
+            var circleAnimation = document.createElement("div");
+            circleAnimation.className = "circle-clipper left";
+
+            var circle1 = document.createElement("div");
+            circle1.className = "circle";
+            circleAnimation.appendChild(circle1);
+
+            var gap = document.createElement("div");
+            gap.className = "gap-patch";
+
+            var circle2 = document.createElement("div");
+            circle2.className = "circle";
+            gap.appendChild(circle2);
+
+            var circleRightAnimation = document.createElement("div");
+            circleRightAnimation.className = "circle-clipper right";
+
+            var circle3 = document.createElement("div");
+            circle3.className = "circle";
+            circleRightAnimation.appendChild(circle3);
+
+            spinner.appendChild(circleAnimation);
+            spinner.appendChild(gap);
+            spinner.appendChild(circleRightAnimation);
+            progress.appendChild(spinner);
+
+            return progress;
+        },
+        /**
+         * @description If exists, removes a ciruclar progress component.
+         */
+        removePreload: function() {
+
+            var progress = document.getElementById(ID_PRELOAD_COMPONENT);
+            if (progress) progress.parentNode.removeChild(progress);
         }
     }
 
@@ -234,10 +292,13 @@
     }
 
     var Recommendations = {
+
         addRecommendation: function (JSON_track) {
             var track_recommen = JSON.parse(JSON_track);
             var num = recommendations.length;
             recommendations[num] = track_recommen.tracks.items[0];
+            Listener.eventCancionesRecomendadas();
+            Layout.removePreload();
         }
     }
 
@@ -294,7 +355,7 @@
 
 
             if (textField.value.length === 0) {
-                alert("No has introducido ninguna busqueda.");
+                alert("No has introducido ninguna búsqueda.");
             } else {
 
                 Search.searchSong(textField.value);
@@ -346,11 +407,6 @@
 
                     console.log(trackInfo);
 
-
-
-
-
-
                     //PLAY SONG
                 } else {
                     icon.appendChild(document.createTextNode("play_arrow"));
@@ -385,17 +441,16 @@
         },
 
         eventCancionesRecomendadas: function () {
-            alert("cancionesRecomendadas");
+            //alert("cancionesRecomendadas");
             Layout.renderSection("Canciones Recomendadas");
+
+            tracks = recommendations;
 
             for (var i = 0; i < recommendations.length; i++) {
                 console.log("track"+i+":");
                 console.log(recommendations[i]);
                 if (recommendations[i] != null) Layout.renderThumbnail(recommendations[i], i);
-
             }
-
-
         }
     }
 
@@ -410,8 +465,6 @@
             Listener.add (aux, "click", Listener.eventCancionesRecomendadas, false);
         }
     }
-
-
 
 
 

@@ -7137,6 +7137,7 @@ input[type=range]:focus::-ms-fill-upper {
   position: relative;
   width: 48px;
   height: 48px;
+  margin-top: 10px;
 }
 
 .preloader-wrapper.small {

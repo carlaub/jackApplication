@@ -90,8 +90,7 @@
 
             var img = document.createElement("img");
             img.src = track.album.images[0].url;
-            img.width = 640;
-            img.height = 240;
+
             cardImg.appendChild(img);
 
             var cardContent = document.createElement("div");
@@ -100,12 +99,18 @@
             var title = document.createElement("p");
             title.appendChild(document.createTextNode(track.name));
             title.className ="p-card";
+            title.value=track.name;
             var album = document.createElement("p");
             album.appendChild(document.createTextNode(track.artists[0].name));
             album.className ="p-card";
+            album.value=track.artists[0].name;
             var artist = document.createElement("p");
             artist.className ="p-card";
-            if (track.album.name != null) artist.appendChild(document.createTextNode(track.album.name));
+
+            if (track.album.name != null){
+                artist.appendChild(document.createTextNode(track.album.name));
+                artist.value=track.album.name;
+            }
 
             cardContent.appendChild(title);
             cardContent.appendChild(album);
@@ -140,7 +145,7 @@
             var favorite_content = document.createElement("button");
             favorite_content.id = "button-favorite";
 
-            favorite_content.className = "btn-floating waves-effect btn";
+            favorite_content.className = "btn-floating waves-effect btn play";
             favorite_content.addEventListener("click", Listener.eventFavorite, false);
             favorite_content.className = "btn-floating waves-effect btn btn-favorite";
             favorite_content.dataset.favorite ="false";
@@ -276,12 +281,6 @@
             console.log("artist: " + track["artists"]);
             return track["artists"][0]["name"];
         },
-        JSONtoTrack: function (json_response) {
-            var track = JSON.parse(json_response);
-            console.log("track:");
-            console.log(track);
-        }
-
     }
 
 
@@ -345,7 +344,7 @@
 
         },
         muteButtons: function() {
-            var buttons = document.getElementsByClassName("btn-floating waves-effect btn");
+            var buttons = document.getElementsByClassName("btn-floating waves-effect btn play");
             console.log("length: "+buttons.length);
             for (var i = 0; i < buttons.length; i++) {
                 console.log("entra2");
@@ -452,9 +451,15 @@
 
             console.log(buttonFavorite.dataset.favorite);
 
-            if (buttonFavorite.dataset.favorite == true) {
-                buttonFavorite.dataset.favorite = false;
+            if (buttonFavorite.dataset.favorite === 'true') {
+                console.log("hola");
+                buttonFavorite.dataset.favorite = 'false';
+            } else {
+                console.log(buttonFavorite.parentNode.parentNode.childNodes[1].childNodes[0].value);
+                console.log(buttonFavorite.parentNode.parentNode.childNodes[1].childNodes[1].value);
+                console.log(buttonFavorite.parentNode.parentNode.childNodes[1].childNodes[2].value);
 
+                buttonFavorite.dataset.favorite = 'true';
             }
         },
         playSong: function (track) {

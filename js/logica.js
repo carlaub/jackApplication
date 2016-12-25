@@ -22,7 +22,6 @@
      */
     var sectionTracks = [];
 
-
     /**
      * Section indexes.
      */
@@ -42,8 +41,12 @@
 
     var Layout = {
 
-
-
+        /**
+         * @deprecated This method should be replaced by renderSection and renderThumbnail.
+         *
+         * @param tracks
+         * @param numTracks
+         */
         setImages: function(tracks, numTracks) {
 
             //borrar busqueda anterior
@@ -76,11 +79,46 @@
                     Layout.renderThumbnail(tracks[i], i);
 
                     //players.add(i, 'Xa0Q0J5tOP0');
-
                 }
             }
 
         },
+
+        removeLastSection: function() {
+
+            console.log("removing last section");
+
+            //borrar busqueda anterior
+            var generalSection=document.getElementById("general");
+            var section=document.getElementById("section-id");
+
+
+            if (section != null) {
+                section.parentNode.removeChild(section);
+            }
+        },
+
+        renderEmptySectionMessage: function(title) {
+
+            console.log("rendering empty result message");
+            Layout.removeLastSection();
+
+            var generalSection = document.getElementById("general");
+            var sectionTitle = document.createElement("h3");
+            sectionTitle.appendChild(document.createTextNode(title));
+
+            var section = document.createElement("div");
+            section.id = "section-id";
+            section.className="row";
+
+            var message = document.createElement("h4");
+            message.appendChild(document.createTextNode("No se han encontrado resultados."));
+            section.appendChild(sectionTitle);
+            section.appendChild(message);
+
+            generalSection.appendChild(section);
+        },
+
         renderThumbnail: function(track, numTrack) {
 
             var section = document.getElementById("section-id");
@@ -187,18 +225,14 @@
 
         // to load the recommendations section
         renderSection: function(title){
-            //borrar busqueda anterior
+
+            Layout.removeLastSection();
+
             var generalSection=document.getElementById("general");
-            var section=document.getElementById("section-id");
-
-
-            if (section != null) {
-                section.parentNode.removeChild(section);
-            }
 
             var sectionTitle = document.createElement("h3");
 
-            section = document.createElement("div");
+            var section = document.createElement("div");
             section.id = "section-id";
 
             sectionTitle.appendChild(document.createTextNode(title));
@@ -221,7 +255,16 @@
          * @description Renders a circular progress component.
          *
          * @returns {Element} To be added into a DOC node.
+         *
+         * NOTE: Not working as desired u.u
          */
+        selectTab: function(tabId) {
+
+            //$("#tab-searches").click();
+            //$("#tab-searches2").click()
+
+        },
+
         renderPreload: function() {
 
             var progress = document.createElement("div");
@@ -259,6 +302,7 @@
 
             return progress;
         },
+
         /**
          * @description If exists, removes a ciruclar progress component.
          */
@@ -267,7 +311,7 @@
             var progress = document.getElementById(ID_PRELOAD_COMPONENT);
             if (progress) progress.parentNode.removeChild(progress);
         }
-    }
+    };
 
     var Track = {
 
@@ -277,11 +321,10 @@
         },
         getArtist: function (track) {
 
-
             console.log("artist: " + track["artists"]);
             return track["artists"][0]["name"];
-        },
-    }
+        }
+    };
 
 
     var Search = {
@@ -302,10 +345,13 @@
             var json_response_tracks = JSON.parse(responseData);
 
             currentSection = Section.SEARCHES;
-            //Update Layout
-            Layout.setImages(json_response_tracks.tracks.items, 8);
-            // TODO: Check if the method is used generically
             sectionTracks[Section.SEARCHES] = json_response_tracks.tracks.items;
+            //Listener.eventSearchesTabSelected();
+            //Update Layout
+            //Layout.setImages(json_response_tracks.tracks.items, 8);
+
+            Layout.selectTab("tab-searches");
+
         },
         getTrack: function(idTrack) {
             console.log("get track: " + sectionTracks[currentSection][idTrack]);
@@ -320,7 +366,7 @@
             var num = recommendations.length;
             recommendations[num] = track_recommen.tracks.items[0];
             sectionTracks[Section.RECOMMENDED_SONGS] = recommendations;
-            Listener.eventCancionesRecomendadas();
+            //Listener.eventCancionesRecomendadas();
             Layout.removePreload();
         }
     }
@@ -369,9 +415,11 @@
 
 
     var Listener = {
+
         add: function(object, event, callback, capture) {
             object.addEventListener(event,callback,capture);
         },
+
         eventSearch: function eventSearch (event) {
             event.preventDefault();
             var textField = document.getElementById("search-input");
@@ -458,10 +506,28 @@
                 console.log(buttonFavorite.parentNode.parentNode.childNodes[1].childNodes[0].value);
                 console.log(buttonFavorite.parentNode.parentNode.childNodes[1].childNodes[1].value);
                 console.log(buttonFavorite.parentNode.parentNode.childNodes[1].childNodes[2].value);
+                var cardsList = document.getElementById("section-id");
+                var selectedCard = null;
 
+                // so funny hahah
+                var toCompareWith = buttonFavorite.parentNode.parentNode.parentNode.parentNode.parentNode;
+
+                // the idea is simple, just find the selected card to pass the FULL info of the track
+                // to the playList position in sectionTracks!
+                for (var i = 0; i < cardsList.childElementCount; i++) {
+
+                    if (cardsList.childNodes[i] === toCompareWith) {
+
+                        console.log("adding song to playlist!");
+                        console.log(sectionTracks[currentSection][i]);
+                        sectionTracks[Section.PLAYLIST].push(sectionTracks[currentSection][i-1]);
+                        break; // I won't admit I wrote this.
+                    }
+                }
                 buttonFavorite.dataset.favorite = 'true';
             }
         },
+
         playSong: function (track) {
 
             var song = youtube.play(Track.getArtist(track), Track.getName(track));
@@ -475,20 +541,49 @@
 
             //tracks = recommendations;
 
+            if (recommendations.length === 0) Layout.renderEmptySectionMessage("Canciones Recomendadas");
+
             for (var i = 0; i < recommendations.length; i++) {
                 console.log("track"+i+":");
                 console.log(recommendations[i]);
                 if (recommendations[i] != null) Layout.renderThumbnail(recommendations[i], i);
             }
         },
+
         eventSearchesTabSelected: function() {
+
+            console.log("aquiiii2");
 
             Layout.renderSection("Resultados de tu búsqueda");
             currentSection = Section.SEARCHES;
 
             if (sectionTracks[currentSection] == null)
-                alert("Todavía no has realizado ninguna búsqueda.");
+                Layout.renderEmptySectionMessage("Resultados de tu búsqueda");
             else {
+
+                if (sectionTracks[currentSection].length === 0)
+                    Layout.renderEmptySectionMessage("Resultados de tu búsqueda");
+
+                for (var i = 0; i < sectionTracks[currentSection].length; i++) {
+
+                    Layout.renderThumbnail(sectionTracks[currentSection][i], i);
+                }
+            }
+            Layout.removePreload();
+        },
+
+        eventPlayListTabSelected: function() {
+
+            Layout.renderSection("Tu Lista de Reproducción");
+            currentSection = Section.PLAYLIST;
+
+            if (sectionTracks[currentSection] == null)
+                Layout.renderEmptySectionMessage("Tu Lista de Reproducción");
+            else {
+
+                if (sectionTracks[currentSection].length === 0)
+                    Layout.renderEmptySectionMessage("Tu Lista de Reproducción");
+
                 for (var i = 0; i < sectionTracks[currentSection].length; i++) {
 
                     Layout.renderThumbnail(sectionTracks[currentSection][i], i);
@@ -505,11 +600,16 @@
         start: function() {
             Search.addListener();
 
+            sectionTracks[Section.PLAYLIST] = [];
+
             var aux = document.getElementById("canciones-recomendadas");
             Listener.add (aux, "click", Listener.eventCancionesRecomendadas, false);
 
             var searchesTab = document.getElementById("tab-searches");
             Listener.add(searchesTab, "click", Listener.eventSearchesTabSelected, false);
+
+            var playlistTab = document.getElementById("tab-playlist");
+            Listener.add(playlistTab, "click", Listener.eventPlayListTabSelected, false);
         }
     };
 

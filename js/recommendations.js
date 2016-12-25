@@ -51,7 +51,7 @@ var Recommendation = function() {
             }
             if (request.status === 200) {
 
-                console.log(request.responseText);
+                //console.log(request.responseText);
                 callback(JSON.parse(request.responseText));
             }
             else console.log("error during the request: " + request.status);

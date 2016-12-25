@@ -36,21 +36,23 @@
                 <form className="search-form" method="get">
                     <ul>
                         <li><input id="search-input" placeholder="Busca cancion" MAXLENGTH="25" ></li>
-                        <li><button class="waves-effect waves-light btn button-search"  id="search-button" type="submit" >Buscar</button></li>
+                        <li>
+                            <button class="waves-effect waves-light btn button-search"  id="search-button" type="submit">Buscar</button>
+                        </li>
                     </ul>
                 </form>
             </div>
 
-            <ul class="tabs tabs-transparent">
-                <li class="tab"><a href="#tab2">Artistas Recomendados</a></li>
-                <li class="tab" id="canciones-recomendadas"><a href="#tab3">Canciones Recomendadas</a></li>
-                <li class="tab"><a href="#tab4">Lista reproduccion</a></li>
-                <li class="tab" id="tab-searches"><a href="#tab5">Búsqueda</a></li>
+            <ul id="tabs" class="tabs tabs-transparent">
+                <li class="tab" id="tab2"><a href="#tab22">Artistas Recomendados</a></li>
+                <li class="tab" id="canciones-recomendadas"><a href="#canciones-recomendadas2">Canciones Recomendadas</a></li>
+                <li class="tab" id="tab-playlist"><a href="#tab-playlist2">Lista de Reproducción</a></li>
+                <li class="tab" id="tab-searches"><a href="#tab-searches2">Búsqueda</a></li>
             </ul>
         </div>
     </nav>
-    <div id="tab2" class="col s12"></div>
-    <div id="tab3" class="col s12"></div>
+    <!--<div id="tab2" class="col s12"></div>-->
+    <!--<div id="tab3" class="col s12"></div>-->
 
 
     <div data-video="VIDEO_ID"
@@ -145,8 +147,6 @@
             </div>
 
         </div>
-
-
 
     </section>
 

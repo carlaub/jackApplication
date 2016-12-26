@@ -9,8 +9,9 @@
 
 (function() {
 
-    var spotify = Spotify();
-    var recommend = Recommendation();
+    var spotify     = Spotify();
+    var recommend   = Recommendation();
+    var storage     = LocalStorage();
 
     const SONG_INFO = "card-content";
     const ID_PRELOAD_COMPONENT  = "preload-section";
@@ -251,6 +252,13 @@
             generalSection.appendChild(section);
 
         },
+
+        selectTab: function(tabId) {
+
+            //$("#tab-searches").click();
+            //$("#tab-searches2").click()
+
+        },
         /**
          * @description Renders a circular progress component.
          *
@@ -258,13 +266,6 @@
          *
          * NOTE: Not working as desired u.u
          */
-        selectTab: function(tabId) {
-
-            //$("#tab-searches").click();
-            //$("#tab-searches2").click()
-
-        },
-
         renderPreload: function() {
 
             var progress = document.createElement("div");
@@ -304,7 +305,7 @@
         },
 
         /**
-         * @description If exists, removes a ciruclar progress component.
+         * @description If exists, removes a circular progress component.
          */
         removePreload: function() {
 
@@ -323,6 +324,32 @@
 
             console.log("artist: " + track["artists"]);
             return track["artists"][0]["name"];
+        },
+        /**
+         * Finds a track in the playlist.
+         *
+         * @param track The track to find.
+         *
+         * @returns {boolean} true if the track exists, false if not.
+         */
+        existsInPlaylist: function (track) {
+
+            for (var i = 0; i < sectionTracks[Section.PLAYLIST].length; i++)
+
+                if (sectionTracks[Section.PLAYLIST][i] === track) return true;  // shame
+
+            return false;
+        },
+        /**
+         * Removes a track from the playlist.
+         *
+         * @param track The track to be removed.
+         */
+        // Pre: the playlist does not have duplicated tracks
+        removeFromPlayList: function(track) {
+
+            var index = sectionTracks[Section.PLAYLIST].indexOf(track);
+            if (index >= 0) sectionTracks[Section.PLAYLIST].splice(index, 1);
         }
     };
 
@@ -339,7 +366,6 @@
             var myRequest = spotify.prepareSearchRequest(song, "track", "8");
 
              spotify.spotifySearch(myRequest, Search.getTracks);
-
         },
         getTracks: function(responseData) {
             var json_response_tracks = JSON.parse(responseData);
@@ -357,7 +383,7 @@
             console.log("get track: " + sectionTracks[currentSection][idTrack]);
             return sectionTracks[currentSection][idTrack];
         }
-    }
+    };
 
     var Recommendations = {
 
@@ -366,10 +392,12 @@
             var num = recommendations.length;
             recommendations[num] = track_recommen.tracks.items[0];
             sectionTracks[Section.RECOMMENDED_SONGS] = recommendations;
+
+            Materialize.toast('¡Nuevas recomendaciones listas!', 4000) // 4000 is the duration of the toast
             //Listener.eventCancionesRecomendadas();
             Layout.removePreload();
         }
-    }
+    };
 
     var player = {
         loadSong: function (src) {
@@ -500,14 +528,13 @@
             console.log(buttonFavorite.dataset.favorite);
 
             if (buttonFavorite.dataset.favorite === 'true') {
-                console.log("hola");
+                console.log("hola"); // hola carla :D
                 buttonFavorite.dataset.favorite = 'false';
             } else {
                 console.log(buttonFavorite.parentNode.parentNode.childNodes[1].childNodes[0].value);
                 console.log(buttonFavorite.parentNode.parentNode.childNodes[1].childNodes[1].value);
                 console.log(buttonFavorite.parentNode.parentNode.childNodes[1].childNodes[2].value);
                 var cardsList = document.getElementById("section-id");
-                var selectedCard = null;
 
                 // so funny hahah
                 var toCompareWith = buttonFavorite.parentNode.parentNode.parentNode.parentNode.parentNode;
@@ -518,16 +545,34 @@
 
                     if (cardsList.childNodes[i] === toCompareWith) {
 
-                        console.log("adding song to playlist!");
-                        console.log(sectionTracks[currentSection][i]);
-                        sectionTracks[Section.PLAYLIST].push(sectionTracks[currentSection][i-1]);
-                        break; // I won't admit I wrote this.
+                        //in case we are in the playlist section, we remove the element instead of adding it again
+                        if (currentSection === Section.PLAYLIST) {
+
+                            Track.removeFromPlayList(sectionTracks[currentSection][i - 1]);
+                            storage.savePlaylist(sectionTracks[Section.PLAYLIST]);
+                            Materialize.toast('Canción eliminada de la lista', 3000); // 4000 is the duration of the toast
+
+                            // TODO: check how to click again on the tab programatically
+                            //window.location.reload(true);
+                            break;
+                        }
+                        if (Track.existsInPlaylist(sectionTracks[currentSection][i - 1])) {
+                            alert("Esta canción ya se encuentra en la lista de reproducción.");
+                            break;
+                        }
+                        else {
+
+                            sectionTracks[Section.PLAYLIST].push(sectionTracks[currentSection][i - 1]);
+                            storage.savePlaylist(sectionTracks[Section.PLAYLIST]);
+                            Materialize.toast('Añadida a tu lista de reproducción', 3000); // 4000 is the duration of the toast
+                            //window.location.reload(true);
+                            break;
+                        }
                     }
                 }
                 buttonFavorite.dataset.favorite = 'true';
             }
         },
-
         playSong: function (track) {
 
             var song = youtube.play(Track.getArtist(track), Track.getName(track));
@@ -551,8 +596,6 @@
         },
 
         eventSearchesTabSelected: function() {
-
-            console.log("aquiiii2");
 
             Layout.renderSection("Resultados de tu búsqueda");
             currentSection = Section.SEARCHES;
@@ -600,7 +643,7 @@
         start: function() {
             Search.addListener();
 
-            sectionTracks[Section.PLAYLIST] = [];
+            sectionTracks[Section.PLAYLIST] = storage.getSavedPlaylist();
 
             var aux = document.getElementById("canciones-recomendadas");
             Listener.add (aux, "click", Listener.eventCancionesRecomendadas, false);

@@ -120,7 +120,7 @@
             generalSection.appendChild(section);
         },
 
-        renderThumbnail: function(track, numTrack) {
+        renderThumbnail: function(track, numTrack, favoriteThumbnail) {
 
             var section = document.getElementById("section-id");
 
@@ -173,7 +173,7 @@
 
 
 
-            play_content.className = "btn-floating waves-effect btn";
+            play_content.className = "btn-floating waves-effect btn play";
             var play = document.createElement("i");
             play.className="material-icons";
             play_content.addEventListener("click", Listener.eventPlay, false);
@@ -192,11 +192,46 @@
             var favorite = document.createElement("i");
             favorite.className ="material-icons";
 
-            favorite.appendChild(document.createTextNode("loyalty"));
-            favorite_content.appendChild(favorite);
+            //Change icon if render section if favorites songs. Add next and previous buttons
+            if (favoriteThumbnail == true) {
+                favorite.appendChild(document.createTextNode("not_interested"));
+                favorite_content.appendChild(favorite);
 
-            div_buttons.appendChild(play_content);
-            div_buttons.appendChild(favorite_content);
+                var next_content = document.createElement("button");
+                next_content.id = "button-next";
+
+                next_content.className = "btn-floating waves-effect btn";
+                next_content.addEventListener("click", Listener.nextSong, false);
+
+                var next = document.createElement("i");
+                next.className= "material-icons";
+                next.appendChild(document.createTextNode("fast_forward"));
+                next_content.appendChild(next);
+
+                var previous_content = document.createElement("button");
+                previous_content.id = "button-previous";
+
+                previous_content.className = "btn-floating waves-effect btn";
+                previous_content.addEventListener("click", Listener.previousSong, false);
+
+                var previous = document.createElement("i");
+                previous.className= "material-icons";
+                previous.appendChild(document.createTextNode("fast_rewind"));
+                previous_content.appendChild(previous);
+
+                div_buttons.appendChild(previous_content);
+                div_buttons.appendChild(play_content);
+                div_buttons.appendChild(next_content);
+                div_buttons.appendChild(favorite_content);
+            } else {
+                favorite.appendChild(document.createTextNode("loyalty"));
+                favorite_content.appendChild(favorite);
+
+                div_buttons.appendChild(play_content);
+                div_buttons.appendChild(favorite_content);
+            }
+
+
 
 
             var div_card = document.createElement("div");
@@ -452,12 +487,11 @@
             event.preventDefault();
             var textField = document.getElementById("search-input");
 
-
             if (textField.value.length === 0) {
-                alert("No has introducido ninguna búsqueda.");
+                Materialize.toast('No has introducido tu búsqueda', 3000);
             } else {
-
                 Search.searchSong(textField.value);
+                Materialize.toast('Busqueda realizada', 3000);
             }
         },
 
@@ -505,7 +539,7 @@
 
                     console.log(trackInfo);
 
-                    //PLAY SONG
+
                 } else {
                     icon.appendChild(document.createTextNode("play_arrow"));
                     //event.srcElement.appendChild(icon);
@@ -515,7 +549,7 @@
 
                     player.pause();
 
-                    //PAUSE SONG
+
                 }
 
             //}
@@ -551,7 +585,7 @@
                             Track.removeFromPlayList(sectionTracks[currentSection][i - 1]);
                             storage.savePlaylist(sectionTracks[Section.PLAYLIST]);
                             Materialize.toast('Canción eliminada de la lista', 3000); // 4000 is the duration of the toast
-
+                            Listener.eventPlayListTabSelected();
                             // TODO: check how to click again on the tab programatically
                             //window.location.reload(true);
                             break;
@@ -564,7 +598,7 @@
 
                             sectionTracks[Section.PLAYLIST].push(sectionTracks[currentSection][i - 1]);
                             storage.savePlaylist(sectionTracks[Section.PLAYLIST]);
-                            Materialize.toast('Añadida a tu lista de reproducción', 3000); // 4000 is the duration of the toast
+                            Materialize.toast('Añadida a tu lista de reproducción', 3000); // 3000 is the duration of the toast
                             //window.location.reload(true);
                             break;
                         }
@@ -629,10 +663,17 @@
 
                 for (var i = 0; i < sectionTracks[currentSection].length; i++) {
 
-                    Layout.renderThumbnail(sectionTracks[currentSection][i], i);
+                    Layout.renderThumbnail(sectionTracks[currentSection][i], i, true);
                 }
             }
             Layout.removePreload();
+        },
+
+        previousSong: function() {
+
+        },
+        nextSong: function() {
+
         }
     };
 

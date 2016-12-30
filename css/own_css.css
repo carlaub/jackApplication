@@ -10,6 +10,12 @@
     padding: 2px;
 }
 
+.img-logo {
+    padding: 10px;
+    height: 150px;
+    width: 150px;
+}
+
 .own-container {
     margin: 0 auto;
     max-width: 2000px;
@@ -63,3 +69,21 @@ main{
 .btn-favortite.added {
     background-color: #d90726;
 }
+
+nav {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#444443+0,0b0505+100 */
+    background: #444443; /* Old browsers */
+    background: -moz-linear-gradient(top,  #444443 0%, #0b0505 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #444443 0%,#0b0505 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #444443 0%,#0b0505 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#444443', endColorstr='#0b0505',GradientType=0 ); /* IE6-9 */
+
+
+}
+
+footer.page-footer {
+    margin-top: 20px;
+    padding-top: 20px;
+    background-color: rgba(11, 5, 5, 0.87);
+}
+

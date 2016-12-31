@@ -38,6 +38,7 @@
      * @type {number} The current tab selected on the website. By default the first one.
      */
     var currentSection = Section.RECOMMENDED_ARTISTS;
+    var currentSong = 0;
 
 
     var Layout = {
@@ -157,9 +158,6 @@
 
             //PLAY & FAVORITE BUTTON
 
-            /****
-             *
-             */
 
             var div_buttons = document.createElement("div");
             div_buttons.className = "card-action";
@@ -497,7 +495,7 @@
 
         eventPlay: function (event) {
 
-           // var buttonPlayPause = document.getElementById("button-play-pause");
+
             var buttonPlayPause = event.srcElement.parentNode;
 
             console.log("button play pause: " + buttonPlayPause);
@@ -515,11 +513,14 @@
 
                     if(buttonPlayPause.dataset.playing != "true") {
                         console.log("playing false");
+                        currentSong = id_track;
+                        console.log("current song" + currentSong);
                         player.muteButtons();
                         player.loadSong(trackInfo.preview_url);
                         buttonPlayPause.dataset.playing = "true";
                     } else {
-
+                        currentSong = id_track;
+                        console.log("current song" + currentSong);
                         player.play();
 
                     }
@@ -607,11 +608,7 @@
                 buttonFavorite.dataset.favorite = 'true';
             }
         },
-        playSong: function (track) {
 
-            var song = youtube.play(Track.getArtist(track), Track.getName(track));
-            console.log(song);
-        },
 
         eventCancionesRecomendadas: function () {
             //alert("cancionesRecomendadas");
@@ -673,6 +670,36 @@
 
         },
         nextSong: function() {
+            var cards_songs = document.getElementById("section-id");
+            console.log("parent Node");
+
+            if(currentSong == (sectionTracks[currentSection].length -1 )) {
+                currentSong = 0;
+            } else {
+                currentSong = currentSong + 1;
+
+            }
+            player.muteButtons();
+
+            var card = cards_songs.childNodes[currentSong + 1];
+            console.log(card.lastChild.lastChild.lastChild.lastChild.childNodes[1]);
+            var buttonPlayPause = card.lastChild.lastChild.lastChild.lastChild.childNodes[1];
+
+            buttonPlayPause.removeChild(buttonPlayPause.firstChild);
+            buttonPlayPause.dataset.playing = "true";
+            buttonPlayPause.value= "doPause";
+
+
+
+            var icon = document.createElement("i");
+            icon.className = "material-icons";
+            icon.appendChild(document.createTextNode("pause"));
+            buttonPlayPause.appendChild(icon);
+
+            var trackInfo = Search.getTrack(currentSong);
+
+            player.loadSong(trackInfo.preview_url);
+
 
         }
     };

@@ -121,7 +121,14 @@
             generalSection.appendChild(section);
         },
 
-        renderThumbnail: function(track, numTrack, favoriteThumbnail) {
+        renderThumbnail: function(track, numTrack, favoriteThumbnail, artistThumbnail) {
+
+            // first, we need to know if we are rendering the recommended artist section
+            // or another one
+            var trackName = artistThumbnail? track.getName() : track.name;
+            var trackImage = artistThumbnail? track.getImageURL() : track.album.images[0].url;
+            var artistName = artistThumbnail? "" : track.artists[0].name;
+            var albumName = artistThumbnail? null : track.album.name;
 
             var section = document.getElementById("section-id");
 
@@ -129,7 +136,8 @@
             cardImg.className = "card-image";
 
             var img = document.createElement("img");
-            img.src = track.album.images[0].url;
+            // img.src = track.album.images[0].url;
+            img.src = trackImage;
 
             cardImg.appendChild(img);
 
@@ -137,17 +145,24 @@
             cardContent.className = SONG_INFO;
 
             var title = document.createElement("p");
-            title.appendChild(document.createTextNode(track.name));
+            // title.appendChild(document.createTextNode(track.name));
+            title.appendChild(document.createTextNode(trackName));
+
             title.className ="p-card";
             title.value=track.name;
             var album = document.createElement("p");
-            album.appendChild(document.createTextNode(track.artists[0].name));
+            // album.appendChild(document.createTextNode(track.artists[0].name));
+            album.appendChild(document.createTextNode(artistName));
+
             album.className ="p-card";
-            album.value=track.artists[0].name;
+            // album.value=track.artists[0].name;
+            album.value = artistName;
+
             var artist = document.createElement("p");
             artist.className ="p-card";
 
-            if (track.album.name != null){
+            // if (track.album.name != null){
+            if (albumName != null) {
                 artist.appendChild(document.createTextNode(track.album.name));
                 artist.value=track.album.name;
             }
@@ -156,7 +171,43 @@
             cardContent.appendChild(album);
             cardContent.appendChild(artist);
 
+            var div_card = document.createElement("div");
+            div_card.className = "card";
+            div_card.appendChild(cardImg);
+            div_card.appendChild(cardContent);
+
             //PLAY & FAVORITE BUTTON
+            if (!artistThumbnail)
+                div_card.appendChild(Layout.renderPlayerButtons(numTrack, favoriteThumbnail));
+
+            var div_col = document.createElement("div");
+            div_col.className = "col s12";
+            div_col.appendChild(div_card);
+
+            var div_row = document.createElement("div");
+            div_row.className = "row";
+            div_row.appendChild(div_col);
+
+            var div_col_ext = document.createElement("div");
+            div_col_ext.className = "col s12 m6 l3";
+            div_col_ext.appendChild(div_row);
+
+
+            // in case we are rendering the recommended artists, the full card component can be clicked
+            // to search tracks of this artist
+            if (artistThumbnail)
+                div_col_ext.addEventListener("click", function() {
+
+                    // trackName = artistName, yep...
+                    Materialize.toast('Canciones de ' + trackName + " buscadas", 3000);
+                    var request = spotify.prepareSearchRequest(trackName, "track", 8);
+                    spotify.spotifySearch(request, Search.getTracks);
+                }, false);
+
+            section.appendChild(div_col_ext);
+        },
+
+        renderPlayerButtons: function(numTrack, favoriteThumbnail) {
 
 
             var div_buttons = document.createElement("div");
@@ -168,7 +219,6 @@
             play_content.value = "doPlay";
             play_content.dataset.playing = "false";
             play_content.dataset.idNum = numTrack;
-
 
 
             play_content.className = "btn-floating waves-effect btn play";
@@ -229,34 +279,8 @@
                 div_buttons.appendChild(favorite_content);
             }
 
-
-
-
-            var div_card = document.createElement("div");
-            div_card.className = "card";
-            div_card.appendChild(cardImg);
-            div_card.appendChild(cardContent);
-            div_card.appendChild(div_buttons);
-
-            var div_col = document.createElement("div");
-            div_col.className = "col s12";
-            div_col.appendChild(div_card);
-
-            var div_row = document.createElement("div");
-            div_row.className = "row";
-            div_row.appendChild(div_col);
-
-            var div_col_ext = document.createElement("div");
-            div_col_ext.className = "col s12 m6 l3";
-            div_col_ext.appendChild(div_row);
-
-
-
-            section.appendChild(div_col_ext);
-
-
+            return div_buttons;
         },
-
         // to load the recommendations section
         renderSection: function(title){
 
@@ -274,7 +298,7 @@
 
             section.className="row";
 
-            // if there arent recommendations loaded wh show a circular progress while
+            // if there arent recommendations loaded we show a circular progress while
             // any recommendation is visible
             if (recommendations == null || recommendations.length == 0) {
 
@@ -347,6 +371,31 @@
         }
     };
 
+    var Artist = function() {
+        var name;
+        var image;  // url
+
+        return {
+
+            getName: function() {
+
+                return name;
+            },
+            setName: function(artist) {
+
+                name = artist;
+            },
+            getImageURL: function() {
+
+                return image;
+            },
+            setImageURL: function(imageURL) {
+
+                image = imageURL;
+            }
+        }
+    };
+
     var Track = {
 
         getName: function (track) {
@@ -370,6 +419,14 @@
             for (var i = 0; i < sectionTracks[Section.PLAYLIST].length; i++)
 
                 if (sectionTracks[Section.PLAYLIST][i] === track) return true;  // shame
+
+            return false;
+        },
+        existsInTrackRecommendationsSection: function (track) {
+
+            for (var i = 0; i < sectionTracks[Section.RECOMMENDED_SONGS].length; i++)
+
+                if (sectionTracks[Section.RECOMMENDED_SONGS][i] === track) return true;  // shame
 
             return false;
         },
@@ -420,8 +477,15 @@
 
     var Recommendations = {
 
-        addRecommendation: function (JSON_track) {
+        getLimitValue: function() {
+
+            return 16;
+        },
+        addTrackRecommendation: function (JSON_track) {
             var track_recommen = JSON.parse(JSON_track);
+
+            if (Track.existsInTrackRecommendationsSection(track_recommen)) return;
+
             var num = recommendations.length;
             recommendations[num] = track_recommen.tracks.items[0];
             sectionTracks[Section.RECOMMENDED_SONGS] = recommendations;
@@ -429,6 +493,72 @@
             Materialize.toast('¡Nuevas recomendaciones listas!', 4000) // 4000 is the duration of the toast
             //Listener.eventCancionesRecomendadas();
             Layout.removePreload();
+        },
+        addArtistRecommendation: function(artistName, imageURL) {
+
+            console.log("adding: " + artistName + " and image: " + imageURL);
+            var artist = Artist();
+            artist.setName(artistName);
+            artist.setImageURL(imageURL);
+
+            sectionTracks[Section.RECOMMENDED_ARTISTS].push(artist);
+        },
+
+        /**
+         * In this method we get the stored playlist of the user. If it does not contains any song, we
+         * load recommended artists decided by us.
+         *
+         * But if the user has songs saved as favorites, we are gonna find all the artists (until a coherent limit)
+         * of the songs and find recommended artist for each one of them.
+         *
+         * This method should be called during the start of the application, but can be used in the middle
+         * having into account that the sectionTracks[Section.RECOMMENDED_ARTISTS] has to be cleared if the
+         * purpose is to "reload" the artists recommendations.
+         */
+        findSimilarArtists: function() {
+
+            var playlist = storage.getSavedPlaylist();
+            if (playlist == null || playlist.length == 0)
+                recommend.getRecommendedArtists("Iron Maiden", "8", Recommendations.addArtistRecommendation);
+            else {
+
+                var artists = [];  // the array of artists to find similars
+                var alreadyExists = false;  // the playlist can have various songs of the same artist
+                var limit = Recommendations.getLimitValue();
+
+                for (var i = 0; i < playlist.length && i < limit; i++) {
+                    alreadyExists = false;
+
+                    for (var j = 0; j < artists.length; j++) {
+
+                        if (artists[j] === Track.getArtist(playlist[i]))
+                            alreadyExists = true;
+                    }
+                    if (!alreadyExists) artists.push(Track.getArtist(playlist[i]));
+                }
+
+                limit = artists.length < 6? "3" : artists.length < 10? "2" : "1";
+
+                for (i = 0; i < artists.length; i++)
+                    recommend.getRecommendedArtists(artists[i], limit, Recommendations.addArtistRecommendation);
+            }
+        },
+        findSimilarSongs: function() {
+
+            var playlist = storage.getSavedPlaylist();
+            if (playlist == null || playlist.length == 0)
+                recommend.getRecommendedTracks("ABBA", "Mamma mia", "5", Recommendations.addTrackRecommendation);
+            else {
+
+                var limit = Recommendations.getLimitValue();
+
+                var tracksLimit = playlist.length < 3? "4" : playlist.length < 6? "3"
+                                   : playlist.length < 10? "2" : "1";
+
+                for (var i = 0; i < playlist.length && i < limit; i++)
+                    recommend.getRecommendedTracks(Track.getArtist(playlist[i]), Track.getName(playlist[i]),
+                                                        tracksLimit, Recommendations.addTrackRecommendation);
+            }
         }
     };
 
@@ -511,7 +641,7 @@
 
                     var trackInfo = Search.getTrack(id_track);
 
-                    if(buttonPlayPause.dataset.playing != "true") {
+                    if (buttonPlayPause.dataset.playing != "true") {
                         console.log("playing false");
                         currentSong = id_track;
                         console.log("current song" + currentSong);
@@ -546,11 +676,9 @@
                     //event.srcElement.appendChild(icon);
                     buttonPlayPause.appendChild(icon);
                     console.log(buttonPlayPause.parentNode.value);
-                    buttonPlayPause.value= "doPlay";
+                    buttonPlayPause.value = "doPlay";
 
                     player.pause();
-
-
                 }
 
             //}
@@ -609,6 +737,22 @@
             }
         },
 
+        eventRecommendedArtistsTabSelected: function() {
+
+            Layout.renderSection("Artistas recomendados");
+            currentSection = Section.RECOMMENDED_ARTISTS;
+
+            if (sectionTracks[currentSection] == null || sectionTracks[currentSection].length == 0)
+                Layout.renderEmptySectionMessage("Artistas recomendados");
+
+            else {
+
+                for (var i = 0; i < sectionTracks[currentSection].length; i++) {
+
+                    Layout.renderThumbnail(sectionTracks[currentSection][i], i, false, true);
+                }
+            }
+        },
 
         eventCancionesRecomendadas: function () {
             //alert("cancionesRecomendadas");
@@ -668,6 +812,30 @@
 
         previousSong: function() {
 
+            var cards_songs = document.getElementById("section-id");
+            console.log("parent Node");
+
+            if(currentSong == 0) currentSong = sectionTracks[currentSection].length-1;
+            else currentSong -= 1;
+
+            player.muteButtons();
+
+            var card = cards_songs.childNodes[currentSong + 1];
+            console.log(card.lastChild.lastChild.lastChild.lastChild.childNodes[1]);
+            var buttonPlayPause = card.lastChild.lastChild.lastChild.lastChild.childNodes[1];
+
+            buttonPlayPause.removeChild(buttonPlayPause.firstChild);
+            buttonPlayPause.dataset.playing = "true";
+            buttonPlayPause.value= "doPause";
+
+            var icon = document.createElement("i");
+            icon.className = "material-icons";
+            icon.appendChild(document.createTextNode("pause"));
+            buttonPlayPause.appendChild(icon);
+
+            var trackInfo = Search.getTrack(currentSong);
+
+            player.loadSong(trackInfo.preview_url);
         },
         nextSong: function() {
             var cards_songs = document.getElementById("section-id");
@@ -677,7 +845,6 @@
                 currentSong = 0;
             } else {
                 currentSong = currentSong + 1;
-
             }
             player.muteButtons();
 
@@ -689,8 +856,6 @@
             buttonPlayPause.dataset.playing = "true";
             buttonPlayPause.value= "doPause";
 
-
-
             var icon = document.createElement("i");
             icon.className = "material-icons";
             icon.appendChild(document.createTextNode("pause"));
@@ -699,19 +864,20 @@
             var trackInfo = Search.getTrack(currentSong);
 
             player.loadSong(trackInfo.preview_url);
-
-
         }
     };
 
-    recommend.getRecommendedTracks("spotify:track:6vQNfrrrtwgeqg2tty5garfSgWcm74KEZYfD", "ABBA",
-        "Mamma mia", "5", Recommendations.addRecommendation);
 
     var Application = {
         start: function() {
             Search.addListener();
 
+            sectionTracks[Section.RECOMMENDED_ARTISTS] = [];
+            sectionTracks[Section.RECOMMENDED_SONGS]   = [];
             sectionTracks[Section.PLAYLIST] = storage.getSavedPlaylist();
+
+            Recommendations.findSimilarArtists();
+            Recommendations.findSimilarSongs();
 
             var aux = document.getElementById("canciones-recomendadas");
             Listener.add (aux, "click", Listener.eventCancionesRecomendadas, false);
@@ -721,6 +887,9 @@
 
             var playlistTab = document.getElementById("tab-playlist");
             Listener.add(playlistTab, "click", Listener.eventPlayListTabSelected, false);
+
+            var artistsTab = document.getElementById("tab-artists");
+            Listener.add(artistsTab, "click", Listener.eventRecommendedArtistsTabSelected, false);
         }
     };
 

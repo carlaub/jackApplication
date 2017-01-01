@@ -24,6 +24,9 @@ var Recommendation = function() {
     const ENDPOINT_TRACK            = "track.php?";
     const ENDPOINT_PLAYLIST         = "playlist.php?";
     const MAX_RESULTS               = "5";
+    const API_KEY_LASTFM            = "ec54f0038b295cc1876edf08c8d3c7d1";
+    const API_URL_LASTFM            = "http://ws.audioscrobbler.com/2.0/?";
+
 
     function prepareParameters(fct, id, bucket, limit) {
 
@@ -32,6 +35,19 @@ var Recommendation = function() {
 
         return request;
     }
+
+    function prepareRequestParameters(params, values) {
+        var request = "";
+
+        for (var i = 0; i < params.length; i++) {
+
+            request += params[i] + "=" + values[i];
+            if (i != params.length-1) request += "&";
+        }
+
+        return request;
+    }
+
 
     /**
      * Sends an asynchronous request and, if everything goes well, sends the data to the
@@ -51,7 +67,6 @@ var Recommendation = function() {
             }
             if (request.status === 200) {
 
-                //console.log(request.responseText);
                 callback(JSON.parse(request.responseText));
             }
             else console.log("error during the request: " + request.status);
@@ -63,6 +78,12 @@ var Recommendation = function() {
     }
 
 
+    /**
+     * @deprecated
+     *
+     * @param data
+     * @param renderCallback
+     */
     function onDeezerRecommendedTracksResponse(data, renderCallback) {
 
         if (data["root"]["response"]["anwser"] === "valid" && data["root"]["totalResults"] !== "0") {
@@ -86,6 +107,12 @@ var Recommendation = function() {
     }
 
 
+    /**
+     * @deprecated
+     *
+     * @param data
+     * @param renderCallback
+     */
     function onDeezerSearchResponse(data, renderCallback) {
 
         if (data["root"]["response"]["anwser"] === "valid" && data["root"]["totalResults"] !== "0") {
@@ -105,6 +132,14 @@ var Recommendation = function() {
         else console.log("Recommendations for the track could not be found finally.");
     }
 
+    /**
+     * @deprecated This functions should not be used because the musicovery API is not working properly (timeout)
+     *
+     * @param artist
+     * @param song
+     * @param data
+     * @param renderCallback
+     */
     function onSpotifyRecommendedTracksResponse(artist, song, data, renderCallback) {
 
         // we could not find the spotify track directly in the db, so we will need more steps
@@ -130,6 +165,51 @@ var Recommendation = function() {
         }
     }
 
+
+    function onLastFmRecommendedTracksResponse(data, renderCallback) {
+
+        if (data["similartracks"]["track"].length == 0)
+            console.log("Recommended tracks: no se han encontrado recomendaciontes");
+
+        else {
+
+            var tracks = data["similartracks"]["track"];
+            for (var i = 0; i < tracks.length; i++) {
+
+                var spotify = Spotify();
+
+                var track = tracks[i];
+
+                var artist = track["artist"]["name"];
+
+                var request = spotify.prepareSearchRequest(artist + " " + track["name"], "track", "1");
+                spotify.spotifySearch(request, renderCallback);
+            }
+        }
+    }
+
+    function onLastFmRecommendedArtistsResponse(data, renderCallback) {
+
+        if (data["similarartists"]["artist"].length == 0)
+            console.log("Recommended tracks: no se han encontrado recomendaciontes");
+
+        else {
+
+            var artists = data["similarartists"]["artist"];
+            for (var i = 0; i < artists.length; i++) {
+
+                var artist = artists[i];
+
+                var name = artist["name"];
+                var img  = artist["image"][3]["#text"]; // url
+
+                renderCallback(name, img);
+            }
+        }
+    }
+
+
+
     return {
 
         /**
@@ -142,17 +222,32 @@ var Recommendation = function() {
          * @param limit
          * @param renderCallback
          */
-        getRecommendedTracks: function(spotifyTrackId, artist, song, limit, renderCallback) {
+        getRecommendedTracks: function(artist, song, limit, renderCallback) {
 
-            var request = API_URL_TRACKS_RECOMMEND + ENDPOINT_TRACK +
-                            prepareParameters("getsimilar", spotifyTrackId, "id:spotify", limit);
+            //var request = API_URL_TRACKS_RECOMMEND + ENDPOINT_TRACK +
+              //              prepareParameters("getsimilar", spotifyTrackId, "id:spotify", limit);
+
+            var params = ["method", "artist", "track", "limit", "api_key", "format"];
+            var values = ["track.getsimilar", artist, song, limit, API_KEY_LASTFM, "json"];
+            var request = API_URL_LASTFM + prepareRequestParameters(params, values);
 
             sendRequest(request, function(data) {
 
-                onSpotifyRecommendedTracksResponse(artist, song, data, renderCallback);
+                onLastFmRecommendedTracksResponse(data, renderCallback);
             });
-            //console.log("recommendations request: " + request);
+        },
 
+        getRecommendedArtists: function(artist, limit, renderCallback) {
+
+
+            var params = ["method", "artist", "limit", "api_key", "format"];
+            var values = ["artist.getsimilar", artist, limit, API_KEY_LASTFM, "json"];
+            var request = API_URL_LASTFM + prepareRequestParameters(params, values);
+
+            sendRequest(request, function(data) {
+
+                onLastFmRecommendedArtistsResponse(data, renderCallback);
+            });
         }
 
     }

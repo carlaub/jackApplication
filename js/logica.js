@@ -3,10 +3,6 @@
  */
 
 
-
-
-
-
 (function() {
 
     var spotify     = Spotify();
@@ -205,6 +201,7 @@
                 }, false);
 
             section.appendChild(div_col_ext);
+
         },
 
         renderPlayerButtons: function(numTrack, favoriteThumbnail) {
@@ -312,8 +309,21 @@
 
         selectTab: function(tabId) {
 
-            //$("#tab-searches").click();
-            //$("#tab-searches2").click()
+
+            //AQUI
+            var tab = document.getElementById("tabs");
+            for(var i = 0; i < tab.childNodes.length; i++){
+                if (tab.childNodes[i].firstChild == null) {
+                } else {
+                    tab.childNodes[i].firstChild.className = "";
+                }
+            }
+
+            var searchTab = document.getElementById("tab-searches");
+            searchTab.click();
+            searchTab.firstElementChild.className="active";
+
+
 
         },
         /**
@@ -502,6 +512,10 @@
             artist.setImageURL(imageURL);
 
             sectionTracks[Section.RECOMMENDED_ARTISTS].push(artist);
+
+            //Para que la aplicacion empiece en artistas recomendados
+            var tab = document.getElementById("tabs");
+            tab.firstElementChild.click();
         },
 
         /**
@@ -518,6 +532,7 @@
         findSimilarArtists: function() {
 
             var playlist = storage.getSavedPlaylist();
+
             if (playlist == null || playlist.length == 0)
                 recommend.getRecommendedArtists("Iron Maiden", "8", Recommendations.addArtistRecommendation);
             else {
@@ -542,6 +557,8 @@
                 for (i = 0; i < artists.length; i++)
                     recommend.getRecommendedArtists(artists[i], limit, Recommendations.addArtistRecommendation);
             }
+
+
         },
         findSimilarSongs: function() {
 
@@ -890,6 +907,7 @@
 
             var artistsTab = document.getElementById("tab-artists");
             Listener.add(artistsTab, "click", Listener.eventRecommendedArtistsTabSelected, false);
+
         }
     };
 

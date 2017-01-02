@@ -307,7 +307,11 @@
 
         },
 
-        selectTab: function(tabId) {
+        //Important! select Tab work with href, not with element id -.-'
+        selectTab: function(tabHref) {
+
+            $('ul.tabs').tabs('select_tab', tabHref);
+
 
 
             //AQUI
@@ -322,8 +326,6 @@
             var searchTab = document.getElementById("tab-searches");
             searchTab.click();
             searchTab.firstElementChild.className="active";
-
-
 
         },
         /**
@@ -476,7 +478,7 @@
             //Update Layout
             //Layout.setImages(json_response_tracks.tracks.items, 8);
 
-            Layout.selectTab("tab-searches");
+            Layout.selectTab("tab-searches2");
 
         },
         getTrack: function(idTrack) {
@@ -907,6 +909,11 @@
 
             var artistsTab = document.getElementById("tab-artists");
             Listener.add(artistsTab, "click", Listener.eventRecommendedArtistsTabSelected, false);
+
+
+
+
+
 
         }
     };

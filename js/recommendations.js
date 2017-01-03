@@ -24,6 +24,7 @@ var Recommendation = function() {
     const ENDPOINT_TRACK            = "track.php?";
     const ENDPOINT_PLAYLIST         = "playlist.php?";
     const MAX_RESULTS               = "5";
+    const MAX_TOP_RESULTS           = "16";
     const API_KEY_LASTFM            = "ec54f0038b295cc1876edf08c8d3c7d1";
     const API_URL_LASTFM            = "http://ws.audioscrobbler.com/2.0/?";
 
@@ -166,14 +167,14 @@ var Recommendation = function() {
     }
 
 
-    function onLastFmRecommendedTracksResponse(data, renderCallback) {
+    function onLastFmRecommendedTracksResponse(data, renderCallback, globalField) {
 
-        if (data["similartracks"]["track"].length == 0)
+        if (data[globalField]["track"].length == 0)
             console.log("Recommended tracks: no se han encontrado recomendaciontes");
 
         else {
 
-            var tracks = data["similartracks"]["track"];
+            var tracks = data[globalField]["track"];
             for (var i = 0; i < tracks.length; i++) {
 
                 var spotify = Spotify();
@@ -188,14 +189,14 @@ var Recommendation = function() {
         }
     }
 
-    function onLastFmRecommendedArtistsResponse(data, renderCallback) {
+    function onLastFmRecommendedArtistsResponse(data, renderCallback, globalField) {
 
-        if (data["similarartists"]["artist"].length == 0)
+        if (data[globalField]["artist"].length == 0)
             console.log("Recommended tracks: no se han encontrado recomendaciontes");
 
         else {
 
-            var artists = data["similarartists"]["artist"];
+            var artists = data[globalField]["artist"];
             for (var i = 0; i < artists.length; i++) {
 
                 var artist = artists[i];
@@ -207,8 +208,6 @@ var Recommendation = function() {
             }
         }
     }
-
-
 
     return {
 
@@ -233,7 +232,7 @@ var Recommendation = function() {
 
             sendRequest(request, function(data) {
 
-                onLastFmRecommendedTracksResponse(data, renderCallback);
+                onLastFmRecommendedTracksResponse(data, renderCallback, "similartracks");
             });
         },
 
@@ -246,7 +245,31 @@ var Recommendation = function() {
 
             sendRequest(request, function(data) {
 
-                onLastFmRecommendedArtistsResponse(data, renderCallback);
+                onLastFmRecommendedArtistsResponse(data, renderCallback, "similarartists");
+            });
+        },
+
+        getTopTracks: function(renderCallback) {
+
+            var params = ["method", "limit", "api_key", "format"];
+            var values = ["chart.gettoptracks", MAX_TOP_RESULTS, API_KEY_LASTFM, "json"];
+            var request = API_URL_LASTFM + prepareRequestParameters(params, values);
+
+            sendRequest(request, function(data) {
+
+                onLastFmRecommendedTracksResponse(data, renderCallback, "tracks");
+            });
+        },
+
+        getTopArtists: function(renderCallback) {
+
+            var params = ["method", "limit", "api_key", "format"];
+            var values = ["chart.gettopartists", MAX_TOP_RESULTS, API_KEY_LASTFM, "json"];
+            var request = API_URL_LASTFM + prepareRequestParameters(params, values);
+
+            sendRequest(request, function(data) {
+
+                onLastFmRecommendedArtistsResponse(data, renderCallback, "artists");
             });
         }
 

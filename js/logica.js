@@ -536,7 +536,8 @@
             var playlist = storage.getSavedPlaylist();
 
             if (playlist == null || playlist.length == 0)
-                recommend.getRecommendedArtists("Iron Maiden", "8", Recommendations.addArtistRecommendation);
+                //recommend.getRecommendedArtists("Iron Maiden", "8", Recommendations.addArtistRecommendation);
+                recommend.getTopArtists(Recommendations.addArtistRecommendation);
             else {
 
                 var artists = [];  // the array of artists to find similars
@@ -566,7 +567,8 @@
 
             var playlist = storage.getSavedPlaylist();
             if (playlist == null || playlist.length == 0)
-                recommend.getRecommendedTracks("ABBA", "Mamma mia", "5", Recommendations.addTrackRecommendation);
+                //recommend.getRecommendedTracks("ABBA", "Mamma mia", "5", Recommendations.addTrackRecommendation);
+                recommend.getTopTracks(Recommendations.addTrackRecommendation);
             else {
 
                 var limit = Recommendations.getLimitValue();

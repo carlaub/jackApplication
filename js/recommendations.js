@@ -27,6 +27,8 @@ var Recommendation = function() {
     const MAX_TOP_RESULTS           = "16";
     const API_KEY_LASTFM            = "ec54f0038b295cc1876edf08c8d3c7d1";
     const API_URL_LASTFM            = "http://ws.audioscrobbler.com/2.0/?";
+    var artistsToastShown           = false;
+    var tracksToastShown            = false;
 
 
     function prepareParameters(fct, id, bucket, limit) {
@@ -186,6 +188,10 @@ var Recommendation = function() {
                 var request = spotify.prepareSearchRequest(artist + " " + track["name"], "track", "1");
                 spotify.spotifySearch(request, renderCallback);
             }
+            if (!tracksToastShown) {
+                Materialize.toast('¡Nuevas canciones recomendas listas!', 4000);
+                tracksToastShown = true;
+            }
         }
     }
 
@@ -205,6 +211,10 @@ var Recommendation = function() {
                 var img  = artist["image"][3]["#text"]; // url
 
                 renderCallback(name, img);
+            }
+            if (!artistsToastShown) {
+                Materialize.toast('¡Nuevos artistas recomendados listos!', 4000);
+                artistsToastShown = true;
             }
         }
     }

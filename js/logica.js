@@ -502,7 +502,6 @@
             recommendations[num] = track_recommen.tracks.items[0];
             sectionTracks[Section.RECOMMENDED_SONGS] = recommendations;
 
-            Materialize.toast('¡Nuevas recomendaciones listas!', 4000) // 4000 is the duration of the toast
             //Listener.eventCancionesRecomendadas();
             Layout.removePreload();
         },
@@ -555,7 +554,7 @@
                     if (!alreadyExists) artists.push(Track.getArtist(playlist[i]));
                 }
 
-                limit = artists.length < 6? "3" : artists.length < 10? "2" : "1";
+                limit = artists.length < 3? "6" : artists.length < 6? "3" : artists.length < 10? "2" : "1";
 
                 for (i = 0; i < artists.length; i++)
                     recommend.getRecommendedArtists(artists[i], limit, Recommendations.addArtistRecommendation);
@@ -573,8 +572,8 @@
 
                 var limit = Recommendations.getLimitValue();
 
-                var tracksLimit = playlist.length < 3? "4" : playlist.length < 6? "3"
-                                   : playlist.length < 10? "2" : "1";
+                var tracksLimit = playlist.length < 3? "6" : playlist.length < 5? "4"
+                                   : playlist.length < 8? "3" : playlist.length < 10? "2" : "1";
 
                 for (var i = 0; i < playlist.length && i < limit; i++)
                     recommend.getRecommendedTracks(Track.getArtist(playlist[i]), Track.getName(playlist[i]),

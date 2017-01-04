@@ -38,6 +38,7 @@ var Spotify = function () {
             }
             if (request.status === 200) {
 
+                //console.log(request.responseText);
                 callback(request.responseText);
 
             } else {

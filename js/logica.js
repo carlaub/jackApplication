@@ -84,8 +84,6 @@
 
         removeLastSection: function() {
 
-            console.log("removing last section");
-
             //borrar busqueda anterior
             var generalSection=document.getElementById("general");
             var section=document.getElementById("section-id");
@@ -98,7 +96,6 @@
 
         renderEmptySectionMessage: function(title) {
 
-            console.log("rendering empty result message");
             Layout.removeLastSection();
 
             var generalSection = document.getElementById("general");
@@ -410,15 +407,26 @@
 
     var Track = {
 
+        getId: function(track) {
+
+            console.log("track id: " + JSON.stringify(track["id"], null, 4));
+            return track["id"];
+        },
         getName: function (track) {
 
             return track["name"];
         },
         getArtist: function (track) {
 
-            console.log("artist: " + track["artists"]);
+            console.log("artist: " + JSON.stringify(track["artists"][0]["name"], null, 4));
             return track["artists"][0]["name"];
         },
+        getAlbum: function (track) {
+
+            console.log("album name: " + JSON.stringify(track["album"]["name"], null, 4));
+            return track["album"]["name"];
+        },
+
         /**
          * Finds a track in the playlist.
          *
@@ -507,7 +515,7 @@
         },
         addArtistRecommendation: function(artistName, imageURL) {
 
-            console.log("adding: " + artistName + " and image: " + imageURL);
+            //console.log("adding: " + artistName + " and image: " + imageURL);
             var artist = Artist();
             artist.setName(artistName);
             artist.setImageURL(imageURL);
@@ -661,6 +669,9 @@
 
                     var trackInfo = Search.getTrack(id_track);
 
+                    storage.saveListenedTrack(Track.getId(trackInfo), Track.getName(trackInfo),
+                                                Track.getArtist(trackInfo), Track.getAlbum(trackInfo));
+
                     if (buttonPlayPause.dataset.playing != "true") {
                         console.log("playing false");
                         currentSong = id_track;
@@ -784,8 +795,8 @@
             if (recommendations.length === 0) Layout.renderEmptySectionMessage("Canciones Recomendadas");
 
             for (var i = 0; i < recommendations.length; i++) {
-                console.log("track"+i+":");
-                console.log(recommendations[i]);
+                //console.log("track"+i+":");
+                //console.log(recommendations[i]);
                 if (recommendations[i] != null) Layout.renderThumbnail(recommendations[i], i);
             }
         },
@@ -910,11 +921,6 @@
 
             var artistsTab = document.getElementById("tab-artists");
             Listener.add(artistsTab, "click", Listener.eventRecommendedArtistsTabSelected, false);
-
-
-
-
-
 
         }
     };

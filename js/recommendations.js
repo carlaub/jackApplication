@@ -171,7 +171,9 @@ var Recommendation = function() {
 
     function onLastFmRecommendedTracksResponse(data, renderCallback, globalField) {
 
-        if (data[globalField]["track"].length == 0)
+        var error = data["error"];
+
+        if ((error != null && error === 6) || data[globalField]["track"].length == 0)
             console.log("Recommended tracks: no se han encontrado recomendaciontes");
 
         else {

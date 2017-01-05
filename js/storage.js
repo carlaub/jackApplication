@@ -3,9 +3,22 @@
  */
 
 
+/**
+ * Used to parse json stored track data.
+ *
+ * @type {{getArtistName: TrackStored.getArtistName}}
+ */
+var TrackStored = {
 
+    getArtistName: function(track) {
 
+        return track["artist"];
+    },
+    getTrackName: function(track) {
 
+        return track["title"];
+    }
+};
 
 
 var LocalStorage = function() {
@@ -78,9 +91,9 @@ var LocalStorage = function() {
         this.getTitle = function() { return this.title; };
         this.getArtist = function() { return this.artist; };
         this.getAlbum = function() { return this.album; };
-        this.increaseTimesListened = function() { this.timesListened++; };
-        this.getTimesListened = function() { return this.timesListened; };
     }
+
+
 
     return {
 
@@ -140,6 +153,16 @@ var LocalStorage = function() {
         getListenedTracks: function() {
 
             return storage.getItem(KEY_TRACKS) != null ? JSON.parse(storage.getItem(KEY_TRACKS)) : [];
+        },
+        getListenedTracksOrderedByPlays: function() {
+
+            var tracks = this.getListenedTracks();
+            tracks.sort(function (a, b) {
+
+                return a["timesListened"] > b["timesListened"]? 1 : a["timesListened"] === b["timesListened"]? 0 : -1;
+            });
+
+            return tracks;
         }
     }
 

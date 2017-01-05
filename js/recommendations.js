@@ -223,6 +223,10 @@ var Recommendation = function() {
 
     return {
 
+        refresh: function() {
+
+            artistsToastShown = tracksToastShown = false;
+        },
         /**
          *
          * @description This method tries to find similar tracks for a song.

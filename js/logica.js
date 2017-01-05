@@ -14,6 +14,10 @@
 
     var recommendations=[];
 
+    // number of times tracks are played before the next recommendations search
+    const PLAYS_TO_NEXT_RECOMMENDATION  = 5;
+    var nextRecommendation = PLAYS_TO_NEXT_RECOMMENDATION;
+
     /**
      * @type {Array} Array of sections. Each section represents an array of tracks.
      */
@@ -540,10 +544,10 @@
          */
         findSimilarArtists: function() {
 
-            var playlist = storage.getSavedPlaylist();
+            //var playlist = storage.getSavedPlaylist();
+            var tracksListened = storage.getListenedTracksOrderedByPlays();
 
-            if (playlist == null || playlist.length == 0)
-                //recommend.getRecommendedArtists("Iron Maiden", "8", Recommendations.addArtistRecommendation);
+            if (tracksListened == null || tracksListened.length == 0)
                 recommend.getTopArtists(Recommendations.addArtistRecommendation);
             else {
 
@@ -551,15 +555,15 @@
                 var alreadyExists = false;  // the playlist can have various songs of the same artist
                 var limit = Recommendations.getLimitValue();
 
-                for (var i = 0; i < playlist.length && i < limit; i++) {
+                for (var i = 0; i < tracksListened.length && i < limit; i++) {
                     alreadyExists = false;
 
                     for (var j = 0; j < artists.length; j++) {
 
-                        if (artists[j] === Track.getArtist(playlist[i]))
+                        if (artists[j] === TrackStored.getArtistName(tracksListened[i]))
                             alreadyExists = true;
                     }
-                    if (!alreadyExists) artists.push(Track.getArtist(playlist[i]));
+                    if (!alreadyExists) artists.push(TrackStored.getArtistName(tracksListened[i]));
                 }
 
                 limit = artists.length < 3? "6" : artists.length < 6? "3" : artists.length < 10? "2" : "1";
@@ -567,24 +571,25 @@
                 for (i = 0; i < artists.length; i++)
                     recommend.getRecommendedArtists(artists[i], limit, Recommendations.addArtistRecommendation);
             }
-
-
         },
         findSimilarSongs: function() {
 
-            var playlist = storage.getSavedPlaylist();
-            if (playlist == null || playlist.length == 0)
-                //recommend.getRecommendedTracks("ABBA", "Mamma mia", "5", Recommendations.addTrackRecommendation);
+            //var playlist = storage.getSavedPlaylist();
+            var tracksListened = storage.getListenedTracksOrderedByPlays();
+
+            if (tracksListened == null || tracksListened.length == 0)
                 recommend.getTopTracks(Recommendations.addTrackRecommendation);
             else {
 
                 var limit = Recommendations.getLimitValue();
 
-                var tracksLimit = playlist.length < 3? "6" : playlist.length < 5? "4"
-                                   : playlist.length < 8? "3" : playlist.length < 10? "2" : "1";
+                var tracksLimit = tracksListened.length < 3? "6" : tracksListened.length < 5? "4"
+                                   : tracksListened.length < 8? "3" : tracksListened.length < 10? "2" : "1";
 
-                for (var i = 0; i < playlist.length && i < limit; i++)
-                    recommend.getRecommendedTracks(Track.getArtist(playlist[i]), Track.getName(playlist[i]),
+
+
+                for (var i = 0; i < tracksListened.length && i < limit; i++)
+                    recommend.getRecommendedTracks(TrackStored.getArtistName(tracksListened[i]), TrackStored.getTrackName(tracksListened[i]),
                                                         tracksLimit, Recommendations.addTrackRecommendation);
             }
         }
@@ -627,7 +632,6 @@
                 buttons[i].value= "doPlay";
 
                 player.pause();
-
             }
         }
     };
@@ -669,6 +673,16 @@
 
                     var trackInfo = Search.getTrack(id_track);
 
+                    nextRecommendation--;
+                    if (nextRecommendation == 0) {
+
+                        recommend.refresh();
+                        nextRecommendation = PLAYS_TO_NEXT_RECOMMENDATION;
+                        sectionTracks[Section.RECOMMENDED_ARTISTS] = [];
+                        sectionTracks[Section.RECOMMENDED_SONGS] = [];
+                        Recommendations.findSimilarArtists();
+                        Recommendations.findSimilarSongs();
+                    }
                     storage.saveListenedTrack(Track.getId(trackInfo), Track.getName(trackInfo),
                                                 Track.getArtist(trackInfo), Track.getAlbum(trackInfo));
 

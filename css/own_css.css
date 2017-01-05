@@ -17,6 +17,9 @@
     width: 210px;
 }
 
+.img-card{
+    max-height: 200px;
+}
 .own-container {
     margin: 0 auto;
     max-width: 2000px;
@@ -56,6 +59,10 @@ main{
 .btn-favorite {
     float: right;
     background-color: #992c2a;
+}
+
+.card-image {
+    /*max-height: 200px;*/
 }
 
 

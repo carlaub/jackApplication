@@ -137,9 +137,9 @@
             var img = document.createElement("img");
             // img.src = track.album.images[0].url;
             img.src = trackImage;
+            img.className = "img-card";
 
             cardImg.appendChild(img);
-
             var cardContent = document.createElement("div");
             cardContent.className = SONG_INFO;
 

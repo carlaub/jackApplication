@@ -16,6 +16,8 @@
 
     // number of times tracks are played before the next recommendations search
     const PLAYS_TO_NEXT_RECOMMENDATION  = 5;
+
+    // each time this var reaches zero, new recommendations are laoded
     var nextRecommendation = PLAYS_TO_NEXT_RECOMMENDATION;
 
     /**

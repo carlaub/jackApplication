@@ -17,12 +17,34 @@
     width: 210px;
 }
 
-.img-card{
-    width: 300px;
+.only {
+    margin-right: 10%;
 }
 
+.img-card{
+    max-height: 220px;
+    max-width: 220px;
+    margin: 0 auto;
+    padding-top: 5px;
+    margin-bottom: -20px;
+}
 
+.crop{
+    /*float:left;*/
+    /*margin:.5em 10px .5em 0;*/
+    overflow:hidden; /* IMPORTANTE */
+    position:relative; /* IMPORTANTE */
+    /*border:1px solid #ccc;*/
+    /*width:200px;*/
+    height:225px;
 
+}
+/* Ocultamos parte de la imagen */
+.crop img{
+    position:absolute;
+    top:-20px;
+    left:-55px;
+}
 .aux-class {
     height: 20px;
 }

@@ -132,15 +132,13 @@
             var section = document.getElementById("section-id");
 
             var cardImg= document.createElement("div");
-            cardImg.className = "card-image";
+            cardImg.className = "card-image crop";
 
 
 
             var img = document.createElement("img");
-
             img.src = trackImage;
-
-            img.className = "img-card";
+             // img.className = "img-card";
 
 
 
@@ -227,7 +225,7 @@
             play_content.dataset.idNum = numTrack;
 
 
-            play_content.className = "btn-floating waves-effect btn play";
+            play_content.className = "btn-floating waves-effect btn play only";
             var play = document.createElement("i");
             play.className="material-icons";
             play_content.addEventListener("click", Listener.eventPlay, false);
@@ -701,6 +699,10 @@
                         player.muteButtons();
                         player.loadSong(trackInfo.preview_url);
                         buttonPlayPause.dataset.playing = "true";
+
+                        //Toast song information
+                        Materialize.toast('Estas escuchando '+ Track.getName(trackInfo) + '-' + Track.getAlbum(trackInfo) + ' de ' +
+                            Track.getArtist(trackInfo), 3000);
                     } else {
                         currentSong = id_track;
                         console.log("current song" + currentSong);

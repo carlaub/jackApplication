@@ -125,7 +125,7 @@
             // first, we need to know if we are rendering the recommended artist section
             // or another one
             var trackName = artistThumbnail? track.getName() : track.name;
-            var trackImage = artistThumbnail? track.getImageURL() : track.album.images[0].url;
+            var trackImage = artistThumbnail? track.getImageURL() : track.album.images[1].url;
             var artistName = artistThumbnail? "" : track.artists[0].name;
             var albumName = artistThumbnail? null : track.album.name;
 
@@ -134,10 +134,15 @@
             var cardImg= document.createElement("div");
             cardImg.className = "card-image";
 
+
+
             var img = document.createElement("img");
-            // img.src = track.album.images[0].url;
+
             img.src = trackImage;
+
             img.className = "img-card";
+
+
 
             cardImg.appendChild(img);
             var cardContent = document.createElement("div");
@@ -174,6 +179,7 @@
             div_card.className = "card";
             div_card.appendChild(cardImg);
             div_card.appendChild(cardContent);
+
 
             //PLAY & FAVORITE BUTTON
             if (!artistThumbnail)
@@ -248,7 +254,7 @@
                 var next_content = document.createElement("button");
                 next_content.id = "button-next";
 
-                next_content.className = "btn-floating waves-effect btn";
+                next_content.className = "btn-floating waves-effect btn next";
                 next_content.addEventListener("click", Listener.nextSong, false);
 
                 var next = document.createElement("i");

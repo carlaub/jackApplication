@@ -18,7 +18,13 @@
 }
 
 .img-card{
-    max-height: 200px;
+    width: 300px;
+}
+
+
+
+.aux-class {
+    height: 20px;
 }
 .own-container {
     margin: 0 auto;
@@ -57,10 +63,18 @@ main{
 }
 
 .btn-favorite {
-    float: right;
+
     background-color: #992c2a;
+    /*margin-left: 10px;*/
 }
 
+.next {
+    margin-right: 10%;
+}
+
+.btn {
+    margin-bottom: 2px;
+}
 .card-image {
     /*max-height: 200px;*/
 }
@@ -77,6 +91,9 @@ main{
 .btn-favortite.added {
     background-color: #d90726;
 }
+
+
+
 
 nav {
 

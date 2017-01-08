@@ -2,14 +2,10 @@
 <html lang="es">
 
     <head>
-
         <meta charset="utf-8">
-
         <meta name="author" content="">
-
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
 
         <title>Jack App</title>
         <meta name="author" content="Albert, Carla i Jorge">
@@ -23,62 +19,46 @@
         <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
         <link type="text/css" rel="stylesheet" href="css/own_css.css"  media="screen,projection"/>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-
     </head>
 
     <body>
+        <!--nav tab, contains links to sections-->
+        <nav class="nav-extended">
+            <div class="nav-wrapper nav-div own-container">
+                <!--<a href="#" class="brand-logo center hide-on-med-and-down ">JackApp</a>-->
+                <!--<a href="#" class="brand-logo left">JackApp</a>-->
+                <img class="img-logo" src="img/logo/logo_v1.png">
 
+                <div class="right">
+                    <form className="search-form" method="get">
+                        <ul>
+                            <li><input id="search-input" placeholder="Busca cancion" MAXLENGTH="25" ></li>
+                            <li>
+                                <button class="waves-effect waves-light btn button-search"  id="search-button" type="submit">Buscar</button>
+                            </li>
+                        </ul>
+                    </form>
+                </div>
 
-    <nav class="nav-extended">
-        <div class="nav-wrapper nav-div own-container">
-            <!--<a href="#" class="brand-logo center hide-on-med-and-down ">JackApp</a>-->
-            <!--<a href="#" class="brand-logo left">JackApp</a>-->
-            <img class="img-logo" src="img/logo/logo_v1.png">
-
-            <div class="right">
-                <form className="search-form" method="get">
-                    <ul>
-                        <li><input id="search-input" placeholder="Busca cancion" MAXLENGTH="25" ></li>
-                        <li>
-                            <button class="waves-effect waves-light btn button-search"  id="search-button" type="submit">Buscar</button>
-                        </li>
-                    </ul>
-                </form>
+                <ul id="tabs" class="tabs tabs-transparent">
+                    <li class="tab" id="tab-artists"><a href="#tab-artists2">Artistas Recomendados</a></li>
+                    <li class="tab" id="canciones-recomendadas"><a href="#canciones-recomendadas2">Canciones Recomendadas</a></li>
+                    <li class="tab" id="tab-playlist"><a href="#tab-playlist2">Lista de Reproducción</a></li>
+                    <li class="tab" id="tab-searches"><a href="#tab-searches2">Búsqueda</a></li>
+                </ul>
             </div>
-
-            <ul id="tabs" class="tabs tabs-transparent">
-                <li class="tab" id="tab-artists"><a href="#tab-artists2">Artistas Recomendados</a></li>
-                <li class="tab" id="canciones-recomendadas"><a href="#canciones-recomendadas2">Canciones Recomendadas</a></li>
-                <li class="tab" id="tab-playlist"><a href="#tab-playlist2">Lista de Reproducción</a></li>
-                <li class="tab" id="tab-searches"><a href="#tab-searches2">Búsqueda</a></li>
-            </ul>
-        </div>
-    </nav>
-    <!--<div id="tab2" class="col s12"></div>-->
-    <!--<div id="tab3" class="col s12"></div>-->
+        </nav>
 
 
-    <div data-video="VIDEO_ID"
-         data-autoplay="0"
-         data-loop="1"
-         id="youtube-audio">
-    </div>
+        <!--General Section, dynamically modified by JavaScript-->
+        <section  id="general" >
+            <div id="section-id">
+            </div>
+        </section>
 
-
-    <section  id="general" >
-        <div id="section-id">
-        </div>
-
-    </section>
-
-
-    <audio id="player-audio">
-
-    </audio>
-
-
-
+        <!--Audio element-->
+        <audio id="player-audio">
+        </audio>
     </body>
 
 
@@ -112,16 +92,12 @@
     <!--<script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="js/materialize.min.js"></script>
-    <!--Java Script-->
-    <script type="text/javascript" src="js/Player.js"></script>
+
     <!--<script type="text/javascript" src="js/youtube.js"></script>-->
     <script type="text/javascript" src="js/spotify.js"></script>
     <script type="text/javascript" src="js/recommendations.js"></script>
     <script type="text/javascript" src="js/storage.js"></script>
     <script type="text/javascript" src="js/logica.js"></script>
-
-
-
 </html>
 
 

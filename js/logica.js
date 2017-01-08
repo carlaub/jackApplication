@@ -236,7 +236,7 @@
             var favorite_content = document.createElement("button");
             favorite_content.id = "button-favorite";
 
-            favorite_content.className = "btn-floating waves-effect btn play";
+
             favorite_content.addEventListener("click", Listener.eventFavorite, false);
             favorite_content.className = "btn-floating waves-effect btn btn-favorite";
             favorite_content.dataset.favorite ="false";
@@ -244,8 +244,18 @@
             var favorite = document.createElement("i");
             favorite.className ="material-icons";
 
+            var audio = document.getElementById("player-audio");
+            audio.onended= function(){
+                if (favoriteThumbnail == true) {
+
+                    Listener.nextSong();
+                }
+
+            };
+
             //Change icon if render section if favorites songs. Add next and previous buttons
             if (favoriteThumbnail == true) {
+                play_content.className = "btn-floating waves-effect btn play";
                 favorite.appendChild(document.createTextNode("not_interested"));
                 favorite_content.appendChild(favorite);
 
@@ -275,6 +285,7 @@
                 div_buttons.appendChild(play_content);
                 div_buttons.appendChild(next_content);
                 div_buttons.appendChild(favorite_content);
+
             } else {
                 favorite.appendChild(document.createTextNode("loyalty"));
                 favorite_content.appendChild(favorite);
@@ -601,6 +612,8 @@
         }
     };
 
+
+
     var player = {
         loadSong: function (src) {
             var playerAudio = document.getElementById("player-audio");
@@ -890,6 +903,9 @@
 
             var trackInfo = Search.getTrack(currentSong);
 
+            Materialize.toast('Estas escuchando '+ Track.getName(trackInfo) + '-' + Track.getAlbum(trackInfo) + ' de ' +
+                Track.getArtist(trackInfo), 3000);
+
             player.loadSong(trackInfo.preview_url);
         },
         nextSong: function() {
@@ -917,6 +933,9 @@
             buttonPlayPause.appendChild(icon);
 
             var trackInfo = Search.getTrack(currentSong);
+
+            Materialize.toast('Estas escuchando '+ Track.getName(trackInfo) + '-' + Track.getAlbum(trackInfo) + ' de ' +
+                Track.getArtist(trackInfo), 3000);
 
             player.loadSong(trackInfo.preview_url);
         }

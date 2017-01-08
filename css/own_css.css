@@ -93,25 +93,37 @@ main{
 .next {
     margin-right: 10%;
 }
+.next:hover {
+    background-color: #2eb6aa;
+}
+
+.previous:hover {
+    background-color: #2eb6aa;
+}
+
+.play:hover {
+    background-color: #2eb6aa;
+}
 
 .btn {
     margin-bottom: 2px;
 }
+
 .card-image {
     /*max-height: 200px;*/
 }
 
 
 .btn-favorite:hover {
-    float: right;
-    background-color: #992c2a;
+
+    background-color: #d90726;
 }
 .btn-floating:focus {
-    background-color: #d90726;
+    background-color: #666666;
 }
 
 .btn-favortite.added {
-    background-color: #d90726;
+    background-color: #666666;
 }
 
 
